@@ -21,7 +21,7 @@ const SignIn = () => {
     const onSubmitSuccess = (jwtToken) => {
       Cookies.set("jwt_token",jwtToken,{expires:1})
       setIsErr(false)
-      navigate("/userpage",{replace:true})
+      navigate("/user",{replace:true})
     }
 
     const onSubmitFailure = (errorMsg) => {
@@ -57,7 +57,7 @@ const SignIn = () => {
 
     const jwtToken = Cookies.get("jwt_token")
     if (jwtToken!==undefined) {
-      return <Navigate to="/userpage" />
+      return <Navigate to="/user" />
     }
    
 
@@ -115,7 +115,7 @@ const SignIn = () => {
             Login
           </button>
         </form>
-        <p className="text-white pt-5">New to HackNext ? <Link to={"/register"} className="underline">Register</Link></p>
+        <p className="text-white pt-5">New to HackNext ? <Link to={"/signup"} className="underline">Register</Link></p>
       </div>
     </div>
   );

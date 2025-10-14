@@ -1,56 +1,92 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { RxCrossCircled } from "react-icons/rx";
+import { FormContext } from "../contextApi/FormContext";
+import Cookies from "js-cookie"
 
-const Form = () => {
+const Form = ({ event }) => {
+  const { form, setForm } = useContext(FormContext);
+  const id = event?._id || form?.id;
+  const token = Cookies.get("admin_token")
+
   const [formData, setFormData] = useState({
-    EventTitle: "",
-    EventType: "",
-    Organizer: "",
-    OnlineorOffline: false,
-    PricePool: "",
-    OrganisationName: "",
-    City: "",
-    State: "",
-    Venue: "",
-    StartDate:"",
-    EndDate:"",
-    SpecifiedStacks: ""
+    EventTitle: event?.EventTitle || "",
+    EventDescription:event?.EventDescription || "",
+    EventType: event?.EventType || "",
+    Organizer: event?.Organizer || "",
+    OnlineorOffline:
+      event?.OnlineorOffline === "true" ||
+      event?.OnlineorOffline === true ||
+      false,
+    PricePool: event?.PricePool || "",
+    OrganisationName: event?.OrganisationName || "",
+    City: event?.City || "",
+    State: event?.State || "",
+    Venue: event?.Venue || "",
+    StartDate: event?.StartDate
+      ? new Date(event.StartDate).toISOString().split("T")[0]
+      : "",
+    EndDate: event?.EndDate
+      ? new Date(event.EndDate).toISOString().split("T")[0]
+      : "",
+    SpecifiedStacks: event?.SpecifiedStacks || "",
   });
 
-  const [showForm, setShowForm] = useState(true);
-
+  // handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
-  const handleSubmit = async(e) => {
+  // handle submit
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Event Created Successfully!");
-    const Eventdetails = formData
-    console.log(Eventdetails)
-    const url = "http://localhost:5678/events/post"
-    const options = {
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(Eventdetails)
-    }
-    const response = await fetch(url,options)
-    if (response.ok==true) {
-        const data = await response.json();
-        console.log(data.message)
-    }
-    // setFormData(true)
-  };
 
-  if (!showForm) {
-    return null;
-  }
+    const isUpdating = !!event;
+    const url = isUpdating
+      ? `http://localhost:5678/events/${id}`
+      : "http://localhost:5678/events/post";
+    const method = isUpdating ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      alert(isUpdating ? "Event Updated Successfully!" : "Event Created Successfully!");
+      console.log(data);
+    } else {
+      alert("Something went wrong. Please try again!");
+    }
+
+    // Reset form after submission
+    setFormData({
+      EventTitle: "",
+      EventDescription:"",
+      EventType: "",
+      Organizer: "",
+      OnlineorOffline: false,
+      PricePool: "",
+      OrganisationName: "",
+      City: "",
+      State: "",
+      Venue: "",
+      StartDate: "",
+      EndDate: "",
+      SpecifiedStacks: "",
+    });
+
+    // Close form modal
+    setForm({ open: false, event: null });
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-950 text-white">
@@ -58,21 +94,25 @@ const Form = () => {
         onSubmit={handleSubmit}
         className="bg-gray-900 p-6 rounded-2xl shadow-lg w-full max-w-2xl space-y-4"
       >
-        {/* Header with Close Button */}
+        {/* Header */}
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Create New Event</h2>
+          <h2 className="text-2xl font-bold">
+            {event ? "Update Event" : "Create New Event"}
+          </h2>
           <RxCrossCircled
             className="text-red-500 cursor-pointer"
             size={28}
-            onClick={() => setShowForm(false)}
+            onClick={() => setForm({ open: false, event: null })}
           />
         </div>
 
         <p className="text-gray-400 mb-4">
-          Fill in the details to create a new event
+          {event
+            ? "Edit the details to update the event"
+            : "Fill in the details to create a new event"}
         </p>
 
-        {/* Event Title */}
+        {/* Input fields */}
         <div>
           <label className="block text-sm mb-1">Event Title *</label>
           <input
@@ -86,7 +126,20 @@ const Form = () => {
           />
         </div>
 
-        {/* Event Type */}
+        <div>
+          <label className="block text-sm mb-1">Event Description *</label>
+          <input
+            type="text"
+            name="EventDescription"
+            value={formData.EventDescription}
+            onChange={handleChange}
+            placeholder="Enter event description"
+            className="w-full p-2 rounded-md bg-gray-800 border border-gray-700"
+            required
+          />
+        </div>
+
+
         <div>
           <label className="block text-sm mb-1">Event Type *</label>
           <select
@@ -103,7 +156,6 @@ const Form = () => {
           </select>
         </div>
 
-        {/* Organizer */}
         <div>
           <label className="block text-sm mb-1">Organizer *</label>
           <select
@@ -121,7 +173,6 @@ const Form = () => {
           </select>
         </div>
 
-        {/* Online or Offline */}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -133,7 +184,6 @@ const Form = () => {
           <label>Online or Offline Event</label>
         </div>
 
-        {/* Organisation Name + Price Pool */}
         <div className="flex gap-4">
           <div className="flex flex-col flex-1">
             <label>Organization Name</label>
@@ -142,86 +192,77 @@ const Form = () => {
               name="OrganisationName"
               value={formData.OrganisationName}
               onChange={handleChange}
-              placeholder="Enter Organization name"
               className="p-2 rounded-md bg-gray-800 border border-gray-700"
             />
           </div>
           <div className="flex flex-col flex-1">
-            <label>Price Pool</label>
+            <label>Prize Pool</label>
             <input
               type="text"
               name="PricePool"
               value={formData.PricePool}
               onChange={handleChange}
-              placeholder="Enter Price pool"
               className="p-2 rounded-md bg-gray-800 border border-gray-700"
             />
           </div>
         </div>
 
-        {/* City, State, Venue */}
         <div className="grid grid-cols-3 gap-4">
-            <div>
-                <label>City</label>
-                <input
-                    type="text"
-                    name="City"
-                    value={formData.City}
-                    onChange={handleChange}
-                    placeholder="Enter city"
-                    className="p-2 rounded-md bg-gray-800 border border-gray-700"
-                />
-            </div>
-            <div>
-                <label>State</label>
-                <input
-                    type="text"
-                    name="State"
-                    value={formData.State}
-                    onChange={handleChange}
-                    placeholder="Enter state"
-                    className="p-2 rounded-md bg-gray-800 border border-gray-700"
-                />
-            </div>
-            <div>
-                <label>Venue</label>
-                <input
-                    type="text"
-                    name="Venue"
-                    value={formData.Venue}
-                    onChange={handleChange}
-                    placeholder="Enter venue"
-                    className="p-2 rounded-md bg-gray-800 border border-gray-700"
-                />
-            </div>
+          <div>
+            <label>City</label>
+            <input
+              type="text"
+              name="City"
+              value={formData.City}
+              onChange={handleChange}
+              className="p-2 rounded-md bg-gray-800 border border-gray-700"
+            />
+          </div>
+          <div>
+            <label>State</label>
+            <input
+              type="text"
+              name="State"
+              value={formData.State}
+              onChange={handleChange}
+              className="p-2 rounded-md bg-gray-800 border border-gray-700"
+            />
+          </div>
+          <div>
+            <label>Venue</label>
+            <input
+              type="text"
+              name="Venue"
+              value={formData.Venue}
+              onChange={handleChange}
+              className="p-2 rounded-md bg-gray-800 border border-gray-700"
+            />
+          </div>
         </div>
 
-        <div className="flex">
-            <div className="mr-2 flex flex-col">
-                <label>Start Date</label>
-                <input
-                    type="date"
-                    name="StartDate"
-                    value={formData.StartDate}
-                    onChange={handleChange}
-                    placeholder="Enter venue"
-                    className="p-2 rounded-md bg-gray-800 border border-gray-700"
-                />
-            </div>
-            <div className="mr-2 flex flex-col">
-                <label>End Date</label>
-                <input
-                    type="date"
-                    name="EndDate"
-                    value={formData.EndDate}
-                    onChange={handleChange}
-                    placeholder="Enter venue"
-                    className="p-2 rounded-md bg-gray-800 border border-gray-700"
-                />
-            </div>
+        <div className="flex gap-4">
+          <div className="flex flex-col">
+            <label>Start Date</label>
+            <input
+              type="date"
+              name="StartDate"
+              value={formData.StartDate}
+              onChange={handleChange}
+              className="p-2 rounded-md bg-gray-800 border border-gray-700"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label>End Date</label>
+            <input
+              type="date"
+              name="EndDate"
+              value={formData.EndDate}
+              onChange={handleChange}
+              className="p-2 rounded-md bg-gray-800 border border-gray-700"
+            />
+          </div>
         </div>
 
-        {/* Specified Stacks */}
         <div>
           <label className="block text-sm mb-1">Specified Stacks</label>
           <input
@@ -234,12 +275,11 @@ const Form = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full p-2 bg-purple-600 hover:bg-purple-700 rounded-md font-bold"
         >
-          Create Event
+          {event ? "Update Event" : "Create Event"}
         </button>
       </form>
     </div>

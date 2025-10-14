@@ -1,54 +1,77 @@
-import React, { useState } from 'react'
-import Cookies from "js-cookie"
-import Form from '../../components/Form';
-import { Navigate, useNavigate } from 'react-router'
-import MyEvents from '../../components/MyEvents';
-import AdminOverView from '../../components/AdminOverView';
+import React, { useContext, useState } from "react";
+import Cookies from "js-cookie";
+import { Navigate, useNavigate } from "react-router";
+import Form from "../../components/Form";
+import MyEvents from "../../components/MyEvents";
+import AdminOverView from "../../components/AdminOverView";
+import { FormContext } from "../../contextApi/FormContext";
 
 const AdminDashboard = () => {
-  const navigate = useNavigate()
-  const [form,setForm] = useState(false)
-  const adminToken = Cookies.get("admin_token")
-  if(adminToken==undefined) {
-      return <Navigate to="/admin/login" />
+  const navigate = useNavigate();
+  const { form, setForm } = useContext(FormContext);
+  const [drodownValue,setDropDownValue] = useState('All Events')
+
+  const adminToken = Cookies.get("admin_token");
+  if (!adminToken) {
+    return <Navigate to="/admin/login" />;
   }
 
-  const handleLogout =()=> {
-    Cookies.remove("admin_token")
-    navigate("/admin/login",{replace:true})
-  }
+  const handleLogout = () => {
+    Cookies.remove("admin_token");
+    navigate("/admin/login", { replace: true });
+  };
 
-  const handleCreateEvent = () => {
-      setForm(true)
+  const handleDropValue = (e) => {
+    setDropDownValue(e.target.value)
   }
-
-  const handleMyEvents = () => {
-    setForm(false)
-  }
-
+  // console.log(drodownValue)
 
   return (
     <div className="min-h-screen bg-black text-white px-10 py-8">
-      {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">
-          <span className="text-white">Admin </span>
-          <span className="text-blue-500">Dashboard</span>
+          Admin <span className="text-blue-500">Dashboard</span>
         </h1>
-        <p className="text-gray-400">Manage your events and registrations</p>
-        <button onClick={handleLogout} className='border-2 bg-green-500'>Logout</button>
-      </div>
-      <AdminOverView />
-      {/* Buttons */}
-      <div className="flex gap-4">
-        <button onClick={handleMyEvents} className="px-6 py-2 bg-purple-600 rounded-lg shadow hover:bg-purple-700 transition">
-          My Events
-        </button>
-        <button onClick={handleCreateEvent} className="px-6 py-2 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition">
-          + Create Event
+        <button
+          onClick={handleLogout}
+          className="border-2 border-green-500 bg-green-600 px-4 py-1 rounded-md hover:bg-green-700"
+        >
+          Logout
         </button>
       </div>
-      {form ? <Form />:<MyEvents />}
+
+      {!form.open && <AdminOverView />}
+
+      <div className="flex gap-4 mb-4">
+        <div>
+          <button
+            onClick={() => setForm({ open: false, event: null })}
+            className="px-6 py-2 bg-purple-600 rounded-lg shadow hover:bg-purple-700 transition m-1"
+          >
+            My Events
+          </button>
+          <button
+            onClick={() => setForm({ open: true, event: null })}
+            className="px-6 py-2 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition m-1"
+          >
+            + Create Event
+          </button>
+        </div>
+        <div className="m-1">
+          <select className="bg-gray-700 p-2 rounded-xl" value={drodownValue} onChange={(e)=>handleDropValue(e)} >
+            <option value={"All Events"} >All Events</option>
+            <option value={"Hackathon"}>Hackathon</option>
+            <option value={"Workshop"}>Workshop</option>
+            <option value={"Tech Event"}>Tech Event</option>
+          </select>
+        </div>
+      </div>
+
+      {form.open ? (
+        <Form event={form.event} isopen={form.open} />
+      ) : (
+        <MyEvents dropValue={drodownValue} setForm={setForm} />
+      )}
     </div>
   );
 };

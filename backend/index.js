@@ -1,44 +1,38 @@
+// main API file
 import express from "express";
-import {z} from "zod";
+import { z } from "zod";
 import bcrypt from "bcrypt";
-import mongoose, { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import cors from "cors";
 import { userModel } from "./models/userModels.js";
 import { AdminModel } from "./models/adminModel.js";
 import { TechEventsModel } from "./models/TechEvents.js";
+import { verifyAdmin } from "./authorizeAdmin.js";
+// import { adminAuth } from "./middleware/adminAuth.js";
 
 const app = express();
 dotenv.config();
-
 app.use(express.json());
-app.use(cors({
-    methods: ["GET", "POST", "PUT", "DELETE"]
-}))
+app.use(cors({ methods: ["GET", "POST", "PUT", "DELETE"] }));
 
-
-app.get("/", (req,res) => {
+app.get("/", (req, res) => {
     res.status(200).json({ message: "GET is successful" });
 });
 
-// *---------------register---------------*
-app.post("/signup", async (req,res) => {
+// *---------------USER REGISTER---------------*
+app.post("/signup", async (req, res) => {
     const { username, email, password } = req.body;
-
     const UserRules = z.object({
         username: z.string().min(4).max(15),
-        email: z.email(),
+        email: z.string().email(),
         password: z.string().min(6).max(15)
     });
 
     const parsedData = UserRules.safeParse({ username, email, password });
-
     if (!parsedData.success) {
-        return res.status(400).json({
-            message: "Please give valid input",
-            error: parsedData.error
-        });
+        return res.status(400).json({ message: "Invalid input" });
     }
 
     const existingUser = await userModel.findOne({ email });
@@ -47,197 +41,206 @@ app.post("/signup", async (req,res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userModel.create({ 
+    const newUser = await userModel.create({
         username,
         email,
         password: hashedPassword
     });
 
-    res.status(200).json({
-        message: "User created successfully",
-        result: newUser
-    });
+    res.status(201).json({ message: "User created", result: newUser });
 });
 
-// *---------------USER login----------------*
-app.post("/signin", async (req,res) => {
+// *---------------USER LOGIN---------------*
+app.post("/signin", async (req, res) => {
     const { email, password } = req.body;
-
     const isUserPresent = await userModel.findOne({ email });
-    if (!isUserPresent) {
-        return res.status(400).json({ message: "Invalid email or user not found" });
-    }
+    if (!isUserPresent) return res.status(400).json({ message: "Invalid email" });
 
     const verification = await bcrypt.compare(password, isUserPresent.password);
-    if (!verification) {
-        return res.status(400).json({ message: "Invalid password" });
-    }
+    if (!verification) return res.status(400).json({ message: "Invalid password" });
 
-    const token = jwt.sign(
-        { id: isUserPresent._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-    );
-
-    res.status(200).json({
-        message: "Signin successful",
-        jwt_token:token
-    });
+    const token = jwt.sign({ id: isUserPresent._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    res.status(200).json({ message: "Signin successful", jwt_token: token });
 });
 
-// *******ADMIN**********
 
-// ------------Add new admin details---------------*
-app.post("/admin/register",async(req,res)=>{
-    const {email,code} = req.body;
+//  ADMIN SECTION
+// ------------REGISTER ADMIN---------------
+app.post("/admin/register", async (req, res) => {
+    const { email, code } = req.body;
     const AdminRules = z.object({
-        email:z.email(),
-        code:z.string()
-    })
-    
-    const AdminData = AdminRules.safeParse({email,code})
-    if(!AdminData.success) {
-        return res.status(400).json({
-            message:"Give Valid Inputs"
-        })
-    }
+        email: z.string().email(),
+        code: z.string()
+    });
 
-    const existingAdmin = await AdminModel.findOne({email})
-    if(existingAdmin) {
-        return res.status(400).json({
-            message:"Email already exists"
-        })
-    }
-    const hashedAdminCode = await bcrypt.hash(code,10);
-    const newAdmin = await AdminModel.create({
-        email,
-        code:hashedAdminCode
-    })
+    const AdminData = AdminRules.safeParse({ email, code });
+    if (!AdminData.success) return res.status(400).json({ message: "Invalid input" });
+
+    const existingAdmin = await AdminModel.findOne({ email });
+    if (existingAdmin) return res.status(400).json({ message: "Email already exists" });
+
+    const hashedAdminCode = await bcrypt.hash(code, 10);
+    const newAdmin = await AdminModel.create({ email, code: hashedAdminCode });
+
+    res.status(201).json({ message: "Admin created", admin: newAdmin });
+});
+
+// -------------ADMIN LOGIN--------------
+app.post("/admin/login", async (req, res) => {
+    const { email, code } = req.body;
+    const isAdminPresent = await AdminModel.findOne({ email });
+    if (!isAdminPresent) return res.status(400).json({ message: "Invalid Email" });
+
+    const AdminVerify = await bcrypt.compare(code, isAdminPresent.code);
+    if (!AdminVerify) return res.status(400).json({ message: "Invalid CODE" });
+
+    const AdminToken = jwt.sign({ id: isAdminPresent._id }, process.env.ADMIN_CODE, { expiresIn: "1h" });
+    res.status(200).json({ message: "Login Successfull", adminToken: AdminToken });
+});
+
+
+// EVENTS SECTION
+
+// Create Event (only by logged-in admin)
+app.post("/events/post", verifyAdmin, async (req, res) => {
+  try {
+    const {
+      EventTitle,
+      EventDescription,
+      EventType,
+      Organizer,
+      OnlineorOffline,
+      PricePool,
+      OrganisationName,
+      City,
+      State,
+      Venue,
+      StartDate,
+      EndDate,
+      SpecifiedStacks
+    } = req.body;
+
+    const newEvent = new TechEventsModel({
+      EventTitle,
+      EventDescription,
+      EventType,
+      Organizer,
+      OnlineorOffline,
+      PricePool,
+      OrganisationName,
+      City,
+      State,
+      Venue,
+      StartDate,
+      EndDate,
+      SpecifiedStacks,
+      createdBy: req.adminId  // link event to logged-in admin
+    });
+
+    await newEvent.save();
     res.status(200).json({
-        message:"New Admin Created"
-    })
-})
+      message: "Event Created Successfully",
+      EventDetails: newEvent
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 
-// *-------------ADMIN LOGIN--------------*
-app.post("/admin/login",async(req,res)=>{
-    const {email,code} = req.body;
-    if (!email || !code) {
-        return res.status(400).json({
-            message:"Email and code are required"
-        })
-    }
-    const isAdminPresent = await AdminModel.findOne({email})
-    if (!isAdminPresent) {
-        return res.status(400).json({
-            message:"Invalid Email"
-        })
-    }
-    const AdminVerify = await bcrypt.compare(code,isAdminPresent.code);
-    if(!AdminVerify) {
-        return res.status(400).json({
-            message:"Invalid CODE"
-        })
-    }
-    const AdminToken = jwt.sign(
-        {id:isAdminPresent._id},
-        process.env.ADMIN_CODE,
-        {expiresIn:"1h"}
-    )
-    res.status(200).json({
-        message:"Login Successfull",
-        adminToken:AdminToken
-    })
-
-})
-
-// *******create event***********
-app.post("/events/post",async(req,res)=>{
+//  Get events created by current admin
+app.get("/admin/events", verifyAdmin, async (req, res) => {
     try {
-        const {EventTitle,EventType,Organizer,OnlineorOffline,PricePool,OrganisationName,City,State,Venue,StartDate,EndDate,SpecifiedStacks} = req.body;
-        const newEvent = new TechEventsModel({EventTitle,EventType,Organizer,OnlineorOffline,PricePool,OrganisationName,City,State,Venue,StartDate,EndDate,SpecifiedStacks})
-        await newEvent.save();
-        res.status(200).json({
-            message:"Event Created Successfully",
-            EventDetails:newEvent
-        })
+        const events = await TechEventsModel.find({ admin: req.admin._id });
+        res.status(200).json({ message: "Admin's events", events });
+    } catch (err) {
+        console.error("Error:", err);
+        res.status(500).json({ message: "Server error" });
     }
-    catch(err) {
-        console.log(`Error:${err}`)
-    }
+});
+
+//  Public: Get all events created by all admins
+// app.get("/events", async (req, res) => {
+//     try {
+//         const events = await TechEventsModel.find().populate("admin", "email");
+//         res.status(200).json({ message: "All events", allevents: events });
+//     } catch (err) {
+//         console.error("Error:", err);
+//         res.status(500).json({ message: "Server error" });
+//     }
+// });
+
+app.get("/events/my",verifyAdmin, async (req, res) => {
+  try {
+    const events = await TechEventsModel.find({ createdBy: req.adminId });
+    res.status(200).json({ message: "My Events", events });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+app.get("/events/all", async (req, res) => {
+  try {
+    const events = await TechEventsModel.find().populate("createdBy", "email");
+    res.status(200).json({ message: "All Events", allevents: events });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.get("/userdetails",async(req,res)=> {
+  try {
+
+  }
+  catch(err) {
+    console.log(err)
+  }
 })
 
-app.get("/events",async(req,res)=>{
+// Update event (only if created by logged-in admin)
+app.put("/events/:id", verifyAdmin, async (req, res) => {
     try {
-        const events = await TechEventsModel.find();
-        if(!events) {
-            res.status(400).json({
-                message:"No events are there"
-            })
-        }
-        res.status(200).json({
-            message:"Getting all events",
-            allevents:events
-        })
-    }
-    catch(err) {
-        console.log(`Error:${err}`)
-    }
+        const event = await TechEventsModel.findOne({ _id: req.params.id, admin: req.admin._id });
+        if (!event) return res.status(404).json({ message: "Event not found or not owned by you" });
 
-})
+        Object.assign(event, req.body);
+        await event.save();
 
-app.get("/events/:id",async(req,res)=> {
-    try{
-        const id = req.params.id
-        const specificEvent = await TechEventsModel.findById(id);
-        if(!specificEvent) {
-            res.status(400).json({
-                message:"Todo not found"
-            })
-        }
-        res.status(200).json(specificEvent)
+        res.status(200).json({ message: "Event updated", event });
+    } catch (err) {
+        console.error("Error:", err);
+        res.status(500).json({ message: "Server error" });
     }
-    catch(err) {
-        console.log(`Error:${err}`)
-    }
-})
+});
 
-app.put("/events/:id",async(req,res)=> {
+// Delete event (only if created by logged-in admin)
+app.delete("/events/:id", verifyAdmin, async (req, res) => {
     try {
-        const id = req.params.id
-        const {EventTitle,EventType,Organizer,OnlineorOffline,PricePool,OrganisationName,City,State,Venue,StartDate,EndDate,SpecifiedStacks} = req.body;
-        const updatedEvent = await TechEventsModel.findByIdAndUpdate(id,{EventTitle,EventType,Organizer,OnlineorOffline,PricePool,OrganisationName,City,State,Venue,StartDate,EndDate,SpecifiedStacks})
-        if(!updatedEvent) return res.status(404).json("Error")
-        res.status(200).json({
-            message:updatedEvent
-        })
+        const deletedEvent = await TechEventsModel.findOneAndDelete({
+            _id: req.params.id,
+            admin: req.admin._id
+        });
 
-    }
-    catch(err) {
-        console.log(`Error:${err}`)
-    }
-})
+        if (!deletedEvent)
+            return res.status(404).json({ message: "Event not found or not owned by you" });
 
-app.delete("/events/:id",async(req,res)=>{
-    try{
-        const DeleteEvent = await TechEventsModel.findByIdAndDelete(req.params.id);
-        if (!DeleteEvent) return res.status(404).json({ error: "Event not found" });
-        res.json({ message: "Event deleted successfully" });
+        res.status(200).json({ message: "Event deleted successfully" });
+    } catch (err) {
+        console.error("Error:", err);
+        res.status(500).json({ message: "Server error" });
     }
-    catch(err) {
-        console.log(`Error:${err}`)
-    }
-})
+});
 
+
+// Connect to DB
 async function connection() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         console.log("MongoDB connected");
-        app.listen(5678, () => {
-            console.log("Server is running at port 5678");
-        });
+        app.listen(5678, () => console.log("Server running at port 5678"));
     } catch (err) {
-        console.error("Error connecting to MongoDB:", err);
+        console.error("Error connecting:", err);
         process.exit(1);
     }
 }

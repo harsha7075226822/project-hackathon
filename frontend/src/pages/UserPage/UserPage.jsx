@@ -1,21 +1,18 @@
 import React from 'react'
 import Cookies from "js-cookie"
-import { Navigate, useNavigate } from 'react-router'
+import { Navigate } from 'react-router'
+import UserNavbar from '../../components/UserNavbar';
+import UserOverView from '../../components/UserOverView';
 
 function UserPage() {
-  const navigate = useNavigate()
     const jwtToken = Cookies.get("jwt_token")
     if(jwtToken===undefined) {
-        return <Navigate to="/login" />
-    }
-    const handleLogout = () => {
-        Cookies.remove("jwt_token")
-        navigate("/login",{replace:true})
+        return <Navigate to="/signin" />
     }
   return (
-    <div>
-      <h1>HeroPage</h1>
-      <button className='border-2 bg-red-400 cursor-pointer' onClick={handleLogout}>logout</button>
+    <div className='bg-[#111]'>
+      <UserNavbar />
+      <UserOverView />
     </div>
   )
 }

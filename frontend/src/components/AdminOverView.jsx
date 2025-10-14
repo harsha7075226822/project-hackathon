@@ -1,17 +1,19 @@
-import React from 'react'
+import { useContext } from 'react';
+import CounterContext from '../contextApi/TotalCountsContext';
 import { Calendar, CheckCircle, Trophy, BarChart2 } from "lucide-react";
 
 function AdminOverView() {
+    const { count } = useContext(CounterContext);
     const stats = [
     {
       title: "Total Events",
-      value: 6,
+      value: count,
       icon: <Calendar className="text-purple-500 w-6 h-6" />,
       color: "text-purple-500",
     },
     {
       title: "Verified Events",
-      value: 6,
+      value: count,
       icon: <CheckCircle className="text-green-500 w-6 h-6" />,
       color: "text-green-500",
     },
@@ -28,6 +30,7 @@ function AdminOverView() {
       color: "text-yellow-500",
     },
   ];
+
   return (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
         {stats.map((item, index) => (

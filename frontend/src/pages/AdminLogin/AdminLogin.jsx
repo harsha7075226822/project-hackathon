@@ -17,6 +17,11 @@ function AdminLogin() {
     navigate("/admin/dashboard",{replace:true})
 
   }
+  
+  const AdminToken = Cookies.get("admin_token")
+  if (AdminToken!==undefined) {
+    return <Navigate to="/admin/dashboard" replace />
+  }
 
   const onFailueData = () => {
     setIsErr(true)

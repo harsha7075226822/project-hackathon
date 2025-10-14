@@ -1,5 +1,5 @@
 import React from 'react'
-// import Cookies from "js-cookie"
+import Cookies from "js-cookie"
 import { useNavigate } from "react-router"
 
 const Home = () => {
@@ -19,11 +19,18 @@ const Home = () => {
   // }
 
   const handleUserEvents = () => {
-    navigate("/login")
+    navigate("/signin")
   }
 
   const handleAdminEvents = () => {
-    navigate("/admin/login")
+    const adminToken = Cookies.get("admin_token")
+    console.log(adminToken)
+    if (adminToken!==undefined) {
+      navigate("/admin/dashboard")
+    }
+    else {
+      navigate("/admin/login")
+    }
   }
 
   return (

@@ -1,0 +1,190 @@
+import React, { useEffect, useState } from "react";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaUserAlt,
+  FaTrophy,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
+import { LuClock3 } from "react-icons/lu";
+import Cookies from "js-cookie"
+
+function AllEventsPage({searchQuery,eventType,organizer,stack}) {
+  const [TotalEvents, setTotalEvents] = useState([]);
+  const token = Cookies.get("jwt_token")
+
+  useEffect(() => {
+    const allEventsData = async () => {
+      try {
+        const response = await fetch("http://localhost:5678/events/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` 
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTotalEvents(data.allevents || []);
+          console.log(data)
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    allEventsData();
+  }, []);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  let filteredEvents = TotalEvents
+
+  if (searchQuery.trim()!=="") {
+    filteredEvents = filteredEvents.filter((each)=>each.EventTitle.toLowerCase().includes(searchQuery.toLowerCase()))
+  }
+  if ( eventType!=="All Types" && eventType !=="") {
+    filteredEvents = filteredEvents.filter((each)=>each.EventType.toLowerCase().includes(eventType.toLowerCase()))
+  }
+  if (stack!=="All Stacks" && stack!=="" ) {
+    filteredEvents = filteredEvents.filter((each)=>each.SpecifiedStacks.toLowerCase().includes(stack.toLowerCase()))
+  }
+  if ( organizer!=="All Organizers" && organizer !=="") {
+    filteredEvents = filteredEvents.filter((each)=>each.Organizer.toLowerCase().includes(organizer.toLowerCase()))
+  }
+  
+  const remainingDays = (dateString) => {
+    const date = new Date(dateString)
+    const day1 = String(date.getDate()).padStart(2, "0");
+    const todayDate = new Date()
+    const day2 = String(todayDate.getDate()).padStart(2, "0");
+    if (Number(day1)>Number(day2)) {
+      const remaining = day1-day2;
+      if (remaining==0) {
+        return "Today"
+      }
+      else {
+        return remaining+" days left"
+      }
+    }
+    else {
+      const remaining = day2-day1;
+      if (remaining==0) {
+        return "Today"
+      }
+      else {
+        return remaining+" days left"
+      }
+    }
+  }
+
+  return (
+    <div className="bg-black min-h-screen w-full">
+      {/* Grid Container */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-2">
+        {filteredEvents.length===0? 
+          <p className="text-center text-gray-500 col-span-full">
+            No events found matching your filters.
+          </p>
+        :
+        (filteredEvents.map((each, _id) => (
+          <div
+            key={_id}
+            className="bg-[#111] text-white rounded-xl p-5 border border-gray-800 shadow-lg hover:shadow-xl transition-all"
+          >
+            {/* Top badges */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-full font-medium">
+                {each.Organizer}
+              </span>
+              <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-full font-medium">
+                {each.EventType}
+              </span>
+              <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium">
+                Verified
+              </span>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-semibold mb-1">{each.EventTitle}</h2>
+            <p className="text-gray-400 text-sm mb-4">
+              {each.EventDescription}
+            </p>
+
+            {/* Details */}
+            <div className="space-y-2 text-gray-300 text-sm">
+              <div className="flex items-center gap-2">
+                <FaCalendarAlt className="text-gray-400" />
+                <span>
+                  {formatDate(each.StartDate)} - {formatDate(each.EndDate)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaMapMarkerAlt className="text-gray-400" />
+                <span>
+                  {each.City}, {each.State}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaUserAlt className="text-gray-400" />
+                <span>{each.Venue}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaTrophy className="text-yellow-500" />
+                <span className="text-yellow-500 font-semibold">
+                  ₹ {each.PricePool} in prizes
+                </span>
+              </div>
+            </div>
+
+            {/* Tags */}
+            <ul className="flex flex-wrap gap-2 mt-4">
+              {each.SpecifiedStacks?.split(",").map((stack, index) => (
+                <li
+                  key={index}
+                  className="bg-gray-800 text-gray-200 text-xs px-3 py-1 rounded-full"
+                >
+                  {stack.trim()}
+                </li>
+              ))}
+            </ul>
+
+            {/* Bottom Section */}
+            <div className="flex justify-between items-center mt-5">
+              <div className="flex items-center text-gray-500 text-sm">
+                <LuClock3 className="mr-1" />
+                <span>{`- ${remainingDays(each.StartDate)}`}</span>
+              </div>
+              <button className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md transition">
+                View Details <FaExternalLinkAlt size={12} />
+              </button>
+            </div>
+          </div>
+        )))
+      }
+      </div>
+    </div>
+  );
+}
+
+export default AllEventsPage;

@@ -25,7 +25,7 @@ export default function SignUp() {
     }
 
     const onSubmitSuccess = () => {
-      navigate("/login",{replace:true})
+      navigate("/signin",{replace:true})
     }
 
     const onSubmitFailure = (error) => {
