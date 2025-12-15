@@ -42,7 +42,11 @@ const EachEventDetails = () => {
 
   /* ---------------- FETCH SAVED STATUS ---------------- */
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchSavedStatus = async () => {
+      if (!eventid || !jwtToken) return;
+      
       try {
         const url = `http://localhost:5678/user/saved/${eventid}`;
         const options = {
@@ -55,15 +59,23 @@ const EachEventDetails = () => {
         const response = await fetch(url, options);
         if (response.ok) {
           const data = await response.json();
-          setIsSaved(data.isSaved);
+          if (isMounted) {
+            setIsSaved(!!data.isSaved);
+          }
         }
       } catch (err) {
-        console.log(err);
+        console.error("Error fetching saved status:", err);
+        if (isMounted) {
+          setIsSaved(false);
+        }
       }
     };
-    if (eventid && jwtToken) {
-      fetchSavedStatus();
-    }
+
+    fetchSavedStatus();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [eventid, jwtToken]);
 
   useEffect(() => {
@@ -84,31 +96,42 @@ const EachEventDetails = () => {
   };
 
   const handleSaveBtn = async () => {
+    if (!eventid || !jwtToken) {
+      console.error("Missing event ID or authentication token");
+      return;
+    }
+
     const newSaveState = !isSaved;
-    setIsSaved(newSaveState); // Optimistic update
+    const previousState = isSaved;
+    
+    // Optimistic UI update
+    setIsSaved(newSaveState);
+    
     try {
       const url = "http://localhost:5678/user/saved";
       const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("jwt_token")}`,
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({
           eventid,
           save: newSaveState,
         }),
       };
+      
       const response = await fetch(url, options);
-      const data = await response.json();
-      console.log(data);
-      // If error, revert the state
+      
       if (!response.ok) {
-        setIsSaved(!newSaveState);
+        throw new Error('Failed to update saved status');
       }
+      
+      // No need to update state here as we did it optimistically
     } catch (err) {
-      console.error(err);
-      setIsSaved(!newSaveState); // Revert on error
+      console.error("Error updating saved status:", err);
+      // Revert to previous state on error
+      setIsSaved(previousState);
     }
   };
 
