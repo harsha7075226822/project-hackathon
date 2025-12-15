@@ -41,11 +41,11 @@ function SavedEvents() {
   const Data = events.map((each) => each.eventid);
 
   return (
-    <div>
+    <div className="pt-15">
       {
         loading ? (
           <div className="flex min-h-screen justify-center items-center text-red-500 text-xl">
-            <ThreeDot color="#32cd32" size="medium" text="" textColor="" />
+            <ThreeDot color="#ffffff" size="medium" text="" textColor="" />
           </div>
 
         ) : Data.length === 0 ? (

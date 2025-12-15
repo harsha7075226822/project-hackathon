@@ -154,14 +154,17 @@ function UserAccount() {
       </aside>
 
       {/* CONTENT AREA */}
-      <main className="ml-[300px] w-full bg-black overflow-y-auto">
+      <main className="ml-[300px] w-full flex justify-center items-center bg-black overflow-y-auto">
         <div className="pt-20 px-6">
 
           {activeSection === "user" && (
-            <div className="animate-slideUp">
+            <div className="animate-slideUp flex flex-col justify-center items-center">
               <h1 className="text-2xl text-white font-bold mb-4">
                 User Details
               </h1>
+              <div className="bg-pink-300 p-5 w-[70px] text-center font-bold rounded-4xl">
+                {userData.username[0].toUpperCase()}
+              </div>
               <p className="text-white">Name: {userData.username}</p>
               <p className="text-white">Email: {userData.email}</p>
             </div>
