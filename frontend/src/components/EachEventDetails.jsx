@@ -5,16 +5,18 @@ import { FaArrowLeft } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
 import { FaRegBookmark } from "react-icons/fa";
+import { ThreeDot } from "react-loading-indicators";
 
 const EachEventDetails = () => {
   const navigate = useNavigate();
   const { eventid } = useParams();
   const jwtToken = Cookies.get("jwt_token");
-  const [Issaved,setIsSaved] = useState(null)
-  const [ClassName,setClassName] = useState("")
+
+  const [isSaved, setIsSaved] = useState(false);
   const [eachData, setEachData] = useState({});
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
 
+  /* ---------------- FETCH EVENT DETAILS ---------------- */
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -29,7 +31,6 @@ const EachEventDetails = () => {
         const response = await fetch(url, options);
         if (response.ok) {
           const data = await response.json();
-          console.log(data)
           setEachData(data);
         }
       } catch (err) {
@@ -39,22 +40,79 @@ const EachEventDetails = () => {
     fetchEventDetails();
   }, [eventid, jwtToken]);
 
+  /* ---------------- FETCH SAVED STATUS ---------------- */
+  useEffect(() => {
+    const fetchSavedStatus = async () => {
+      try {
+        const url = `http://localhost:5678/user/saved/${eventid}`;
+        const options = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        };
+        const response = await fetch(url, options);
+        if (response.ok) {
+          const data = await response.json();
+          setIsSaved(data.isSaved);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    if (eventid && jwtToken) {
+      fetchSavedStatus();
+    }
+  }, [eventid, jwtToken]);
+
   useEffect(() => {
     if (eachData.StartDate) {
       const today = new Date();
       const eventStart = new Date(eachData.StartDate);
-      eventStart.setDate(eventStart.getDate() - 1); 
-
-      const isValid = today > eventStart;
-      setIsRegistrationOpen(isValid);
+      eventStart.setDate(eventStart.getDate() - 1);
+      setIsRegistrationOpen(today > eventStart);
     }
   }, [eachData]);
 
-
   const handleApplyNow = () => {
-    navigate(`/events/apply/${eventid}`, {replace: true});
-  }
+    navigate(`/events/apply/${eventid}`, { replace: true });
+  };
 
+  const handleBackBtn = () => {
+    navigate("/user/allevents", { replace: true });
+  };
+
+  const handleSaveBtn = async () => {
+    const newSaveState = !isSaved;
+    setIsSaved(newSaveState); // Optimistic update
+    try {
+      const url = "http://localhost:5678/user/saved";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("jwt_token")}`,
+        },
+        body: JSON.stringify({
+          eventid,
+          save: newSaveState,
+        }),
+      };
+      const response = await fetch(url, options);
+      const data = await response.json();
+      console.log(data);
+      // If error, revert the state
+      if (!response.ok) {
+        setIsSaved(!newSaveState);
+      }
+    } catch (err) {
+      console.error(err);
+      setIsSaved(!newSaveState); // Revert on error
+    }
+  };
+
+  /* ---------------- DATE ---------------- */
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -69,7 +127,6 @@ const EachEventDetails = () => {
     return `${dayName}, ${month} ${day} ${year}`;
   };
 
-  //Deadline (5 days before)
   const DeadLineDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -85,186 +142,143 @@ const EachEventDetails = () => {
     return `${dayName}, ${month} ${day} ${year}`;
   };
 
-  const handleBackBtn = () => {
-    navigate("/user/allevents", { replace: true });
-  };
-
-  //save btn
- const handleSaveBtn = async () => {
-  const newSaveState = !Issaved;   
-  setIsSaved(newSaveState);
-  setClassName(
-    !newSaveState ? "bg-black text-white" : "bg-white text-black"
-  );
-
-  const EventSaved = {
-    eventid: eventid,
-    save: newSaveState, 
-  };
-
-  try {
-    const url = "http://localhost:5678/user/saved";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${Cookies.get("jwt_token")}`,
-      },
-      body: JSON.stringify(EventSaved),
-    };
-
-    const response = await fetch(url, options);
-    const data = await response.json();
-    console.log(data);
-  } catch (err) {
-    console.error(err);
-  }
-};
-
   return (
-    <div className="min-h-screen bg-[#0b0b0d] text-white p-8 flex flex-col items-center pt-30">
-      {/* Header */}
-      <div className="w-full max-w-5xl mb-6">
-        <div className="flex justify-between gap-2 text-sm mb-1">
-          <div className="flex">
-            <span
-              className=" border border-white text-bblack text-center p-2 rounded-4xl mr-2 cursor-pointer hover:bg-black transition"
-              onClick={handleBackBtn} 
-            >
-              <FaArrowLeft size={15} />
-            </span>
-            <span className="bg-emerald-600 text-white px-3 py-1 rounded-full">
-               {eachData.Organizer} Event
-            </span>
-            <span className="bg-blue-600 text-white px-3 py-1  ml-2 rounded-full">
-               {eachData.EventType}
-            </span>
-          </div>
-          <span onClick={handleSaveBtn} className={`${ClassName}  px-3 cursor-pointer py-1 rounded-full`}>
-            <FaRegBookmark size={20} />
-          </span>
-        </div>
-        <h1 className="text-4xl font-bold mt-2">{eachData.EventTitle}</h1>
-        <p className="text-gray-400 pt-1">
-          👤 Organized by {eachData.OrganisationName}
-        </p>
-      </div>
+    <div>
+      {eachData.EventTitle ? (
+        <div className="min-h-screen bg-[#0b0b0d] text-white p-8 flex flex-col items-center pt-30">
+          <div className="w-full max-w-5xl mb-6">
+            <div className="flex justify-between gap-2 text-sm mb-1">
+              <div className="flex">
+                <span
+                  className="border border-white p-2 rounded-4xl mr-2 cursor-pointer hover:bg-black transition"
+                  onClick={handleBackBtn}
+                >
+                  <FaArrowLeft size={15} />
+                </span>
+                <span className="bg-emerald-600 px-3 py-1 rounded-full">
+                  {eachData.Organizer} Event
+                </span>
+                <span className="bg-blue-600 px-3 py-1 ml-2 rounded-full">
+                  {eachData.EventType}
+                </span>
+              </div>
 
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Section */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Event Details */}
-          <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
-            <h2 className="text-xl font-semibold mb-4">Event Details</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <p className="flex items-center gap-2 text-gray-300">
-                  <FaCalendarAlt className="text-purple-400" /> Start Date
-                </p>
-                <p className="mt-1 text-gray-100 font-medium">
-                  {formatDate(eachData.StartDate)}
-                </p>
-              </div>
-              <div>
-                <p className="flex items-center gap-2 text-gray-300">
-                  <FaCalendarAlt className="text-purple-400" /> End Date
-                </p>
-                <p className="mt-1 text-gray-100 font-medium">
-                  {formatDate(eachData.EndDate)}
-                </p>
-              </div>
-              <div>
-                <p className="flex items-center gap-2 text-gray-300">
-                  <FaMapMarkerAlt className="text-purple-400" /> Location
-                </p>
-                <p className="mt-1 text-gray-100 font-medium">
-                  {eachData.Venue}, {eachData.City}, {eachData.State}
-                </p>
-              </div>
-              <div>
-                <p className="flex items-center gap-2 text-gray-300">
-                  <FaTrophy className="text-yellow-400" /> Prize Pool
-                </p>
-                <p className="mt-1 text-yellow-400 font-semibold">
-                  ₹ {eachData.PricePool} in prizes
-                </p>
-              </div>
+              <span
+                onClick={handleSaveBtn}
+                className={`${
+                  isSaved ? "bg-white text-black" : "bg-black text-white"
+                } px-3 cursor-pointer py-1 rounded-full`}
+              >
+                <FaRegBookmark size={20} />
+              </span>
             </div>
-          </div>
 
-          {/* About Section */}
-          <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
-            <h2 className="text-xl font-semibold mb-3">About This Event</h2>
-            <p className="text-gray-300 leading-relaxed">
-              {eachData.EventDescription}
+            <h1 className="text-4xl font-bold mt-2">{eachData.EventTitle}</h1>
+            <p className="text-gray-400 pt-1">
+              👤 Organized by {eachData.OrganisationName}
             </p>
           </div>
 
-          {/* Technologies Section */}
-          <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
-            <h2 className="text-xl font-semibold mb-3">Technologies & Topics</h2>
-            <div className="flex flex-wrap gap-2">
-              {eachData.SpecifiedStacks &&
-                eachData.SpecifiedStacks.split(",").map((stack, index) => (
-                  <p
-                    key={index}
-                    className="bg-blue-700 text-white px-4 py-1 rounded-full text-sm"
+          <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left */}
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold mb-4">Event Details</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="flex items-center gap-2 text-gray-300">
+                      <FaCalendarAlt /> Start Date
+                    </p>
+                    <p>{formatDate(eachData.StartDate)}</p>
+                  </div>
+                  <div>
+                    <p className="flex items-center gap-2 text-gray-300">
+                      <FaCalendarAlt /> End Date
+                    </p>
+                    <p>{formatDate(eachData.EndDate)}</p>
+                  </div>
+                  <div>
+                    <p className="flex items-center gap-2 text-gray-300">
+                      <FaMapMarkerAlt /> Location
+                    </p>
+                    <p>
+                      {eachData.Venue}, {eachData.City}, {eachData.State}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="flex items-center gap-2 text-gray-300">
+                      <FaTrophy /> Prize Pool
+                    </p>
+                    <p className="text-yellow-400">
+                      ₹ {eachData.PricePool}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold mb-3">About This Event</h2>
+                <p className="text-gray-300">{eachData.EventDescription}</p>
+              </div>
+
+              <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold mb-3">Technologies</h2>
+                <div className="flex flex-wrap gap-2">
+                  {eachData.SpecifiedStacks &&
+                    eachData.SpecifiedStacks.split(",").map((stack, index) => (
+                      <span
+                        key={index}
+                        className="bg-blue-700 px-4 py-1 rounded-full text-sm"
+                      >
+                        {stack.trim()}
+                      </span>
+                    ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right */}
+            <div className="flex flex-col gap-6">
+              <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold mb-2">Registration</h2>
+                <p className="flex items-center gap-2 text-gray-400 text-sm mb-3">
+                  <FaClock /> Deadline: {DeadLineDate(eachData.EndDate)}
+                </p>
+
+                {!isRegistrationOpen ? (
+                  <div
+                    onClick={handleApplyNow}
+                    className="w-full text-center bg-gradient-to-r from-blue-600 to-blue-800 py-2 rounded-lg cursor-pointer"
                   >
-                    {stack.trim()}
-                  </p>
-                ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Sidebar */}
-        <div className="flex flex-col gap-6">
-          {/* Registration */}
-          <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
-            <h2 className="text-xl font-semibold mb-2">Registration</h2>
-            <p className="flex items-center gap-2 text-gray-400 text-sm mb-3">
-              <FaClock /> Deadline: {DeadLineDate(eachData.EndDate)}
-            </p>
-
-            {/* Conditional Button */}
-            {!isRegistrationOpen ? (
-              <div onClick={handleApplyNow} className="w-full bg-gradient-to-r text-center from-blue-600 to-blue-800 text-white py-2 rounded-lg font-semibold hover:opacity-90 transition">
-                {/* <a href={`${eachData.FormLink}`} target="_blank" rel="noopener noreferrer" >Apply Now</a> */}
-                <button>Apply Now</button>
+                    Apply Now
+                  </div>
+                ) : (
+                  <button className="w-full bg-gray-700 py-2 rounded-lg cursor-not-allowed">
+                    Expires
+                  </button>
+                )}
               </div>
-            ) : (
-              <button className="w-full bg-gradient-to-r from-gray-600 to-gray-800 text-white py-2 rounded-lg font-semibold cursor-not-allowed opacity-70">
-                 Expires
-              </button>
-            )}
 
-            <p className="text-center text-xs text-gray-400 mt-2">
-              Complete the application form to register
-            </p>
-          </div>
-
-          {/* Event Stats */}
-          <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
-            <h2 className="text-xl font-semibold mb-3">Event Statistics</h2>
-            <div className="space-y-2 text-sm">
-              <p>
-                <span className="text-gray-400">Event Type:</span>{" "}
-                <span className="font-medium">College Event</span>
-              </p>
-              <p>
-                <span className="text-gray-400">Duration:</span>{" "}
-                <span className="font-medium">
+              <div className="bg-[#16161a] p-5 rounded-2xl border border-gray-800">
+                <h2 className="text-xl font-semibold mb-3">Event Statistics</h2>
+                <p className="text-sm">
+                  Duration:{" "}
                   {Math.floor(
-                    (new Date(eachData.EndDate) - new Date(eachData.StartDate)) /
+                    (new Date(eachData.EndDate) -
+                      new Date(eachData.StartDate)) /
                       (1000 * 60 * 60 * 24)
                   )}{" "}
                   Days
-                </span>
-              </p>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex min-h-screen justify-center items-center">
+          <ThreeDot color="#32cd32" size="medium" text="" textColor="" />
+        </div>
+      )}
     </div>
   );
 };

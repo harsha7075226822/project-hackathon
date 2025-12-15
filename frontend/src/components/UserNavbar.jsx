@@ -1,5 +1,5 @@
-import Cookies from "js-cookie"
-import { FaSignInAlt } from 'react-icons/fa';
+// import Cookies from "js-cookie"
+// import { FaSignInAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router'
 import { FaHome } from "react-icons/fa";
 import { FaAngleDoubleRight } from "react-icons/fa";
@@ -10,10 +10,10 @@ import { FaEye } from "react-icons/fa";
 function UserNavbar() {
     const navigate = useNavigate()
 
-    const handleLogout = () => {
-        Cookies.remove("jwt_token")
-        navigate("/signin",{replace:true})
-    }
+    // const handleLogout = () => {
+    //     Cookies.remove("jwt_token")
+    //     navigate("/signin",{replace:true})
+    // }
 
     const handleRefresh = () => {
       navigate("/",{replace:true})
@@ -55,9 +55,9 @@ function UserNavbar() {
           <li className="flex items-center gap-1 cursor-pointer hover:text-purple-500" onClick={handleUserAccount}>
             <span className="mt-1"><FaRegUser /></span>
           </li>
-          <li onClick={handleLogout} className="flex items-center gap-1 cursor-pointer hover:text-purple-500">
+          {/* <li onClick={handleLogout} className="flex items-center gap-1 cursor-pointer hover:text-purple-500">
             <FaSignInAlt /> Logout
-          </li>
+          </li> */}
         </ul>
       </nav>
     </div>

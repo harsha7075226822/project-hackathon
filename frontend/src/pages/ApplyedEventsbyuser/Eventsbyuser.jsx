@@ -5,6 +5,7 @@ import { FcAbout } from "react-icons/fc";
 import { FaAngleLeft } from "react-icons/fa";
 import { useNavigate } from 'react-router';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import { ThreeDot } from "react-loading-indicators";
 
 function Eventsbyuser() {
 
@@ -44,7 +45,7 @@ function Eventsbyuser() {
     if (loading) {
         return (
             <div className="bg-gray-800 min-h-screen flex justify-center items-center text-white text-xl">
-                Loading...
+                <ThreeDot color="#32cd32" size="medium" text="" textColor="" />
             </div>
         );
     }
@@ -84,8 +85,6 @@ function Eventsbyuser() {
                      {appliedData.map((each, id) => (
                         <li key={id} className="m-2 w-full transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                             <div className="bg-gray-900 text-white p-6 rounded-xl shadow-md w-full max-w-xl mx-auto">
-                                
-                                {/* Header Section */}
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2">
                                         <span className="bg-yellow-600 font-bold text-white text-xs px-2 py-0.5 rounded-full">
@@ -102,7 +101,6 @@ function Eventsbyuser() {
                                     </div>
                                 </div>
 
-                                {/* Description */}
                                 <div className="flex">
                                     <span className="m-1">
                                         <FcAbout />
@@ -112,7 +110,6 @@ function Eventsbyuser() {
                                     </p>
                                 </div>
 
-                                {/* Member Details */}
                                 <div>
                                     <h1 className='text-blue-500 font-bold underline p-1'>
                                         Applied Member Details:

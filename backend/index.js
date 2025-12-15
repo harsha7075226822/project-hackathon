@@ -29,8 +29,6 @@ app.use(cors({
 }));
 
 
-// const upload = multer({ dest: "uploads/" });
-
 app.get("/", (req, res) => {
   res.status(200).json({ message: "GET is successful" });
 });
@@ -479,6 +477,26 @@ app.get("/user/savedevents", verifyUserToken, async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching saved events:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.get("/user/saved/:eventid", verifyUserToken, async (req, res) => {
+  try {
+    const { eventid } = req.params;
+    const userId = req.user._id;
+
+    const savedEvent = await SavedModel.findOne({
+      eventid,
+      userId,
+      save: true,
+    });
+
+    res.status(200).json({
+      isSaved: !!savedEvent,
+    });
+  } catch (error) {
+    console.error("Error checking saved event:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
