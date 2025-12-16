@@ -8,7 +8,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Home from "./pages/Home/Home";
 import { CounterProvider } from "./contextApi/TotalCountsContext";
 import { FormProvider } from "./contextApi/FormContext";
-import NotFound from "./pages/ErrorPage/notFound";
+import NotFound from "./pages/ErrorPage/NotFound";
 import DisplayAllEvents from "./pages/UserTotalEvents/DisplayAllEvents";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EachEventDetails from "./components/EachEventDetails";
