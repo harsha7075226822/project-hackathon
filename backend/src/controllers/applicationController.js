@@ -1,0 +1,111 @@
+import jwt from "jsonwebtoken";
+import { AppliedEventModel } from "../models/applyEvent.js";
+import { TechEventsModel } from "../models/TechEvents.js";
+
+export const applyForEvent = async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const eventTitle = req.body.eventTitle;
+    const eventType = req.body.eventType;
+    const eventCity = req.body.EventCity;
+    const StartDate = req.body.StartDate;
+    const EndDate = req.body.EndDate;
+    const Venue = req.body.Venue;
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
+
+    const event = await TechEventsModel.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const deadline = new Date(event.StartDate);
+    deadline.setDate(deadline.getDate() - 5);
+
+    if (new Date() >= deadline) {
+      return res.status(400).json({ message: "Registration deadline has passed" });
+    }
+
+    const existingApplication = await AppliedEventModel.findOne({
+      user: userId,
+      event: eventId
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({ message: "You have already applied to this event" });
+    }
+
+    const application = new AppliedEventModel({
+      ...req.body,
+      user: userId,
+      eventTitle: eventTitle,
+      eventType: eventType,
+      Venue: Venue,
+      StartDate: StartDate,
+      EndDate: EndDate,
+      EventCity: eventCity,
+      admin: event.createdBy,
+      event: eventId
+    });
+
+    await application.save();
+
+    return res.status(201).json({
+      message: "Application submitted successfully",
+      applicationId: application._id
+    });
+
+  } catch (error) {
+    console.error("Error applying for event:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+export const getUserAppliedEvents = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const events = await AppliedEventModel.find({ user: userId });
+    res.status(200).json({
+      message: "AppliedEvents",
+      events: events
+    });
+  } catch (error) {
+    console.error("Error fetching applied events:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+export const getAllAppliedEvents = async (req, res) => {
+  try {
+    const events = await AppliedEventModel.find();
+    res.status(200).json({
+      message: "AppliedEvents",
+      events: events
+    });
+  } catch (error) {
+    console.error("Error fetching all applied events:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+export const getUserApplications = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const applications = await AppliedEventModel.find({ user: decoded.id })
+      .populate('event', 'EventTitle StartDate EndDate Venue')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ applications });
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
