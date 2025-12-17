@@ -5,6 +5,8 @@ import Form from "../../components/Form";
 import MyEvents from "../../components/MyEvents";
 import AdminOverView from "../../components/AdminOverView";
 import { FormContext } from "../../contextApi/FormContext";
+import { FaSignInAlt } from "react-icons/fa";
+import { FaRegUser } from "react-icons/fa";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -24,7 +26,6 @@ const AdminDashboard = () => {
   const handleDropValue = (e) => {
     setDropDownValue(e.target.value)
   }
-  // console.log(drodownValue)
 
   const handleHome = () => {
     navigate("/",{replace:true})
@@ -34,18 +35,25 @@ const AdminDashboard = () => {
     navigate("/createproject",{replace:true})
   }
 
+  // const handleAdminAccount = () => {
+  //   navigate("/adminaccount",{replace:true})
+  // }
+
   return (
     <div className="min-h-screen bg-black text-white px-10 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 onClick={handleHome} className="text-2xl cursor-pointer font-bold">
           Admin <span className="text-blue-500">Dashboard</span>
         </h1>
-        <button
+        <div
           onClick={handleLogout}
-          className="border-2 border-green-500 bg-green-600 px-4 py-1 rounded-md hover:bg-green-700"
+          className="m-4 flex items-center justify-center gap-2 p-2 rounded-xl
+                      bg-rose-500/60 text-white cursor-pointer
+                      hover:bg-rose-500 transition"
         >
+          <FaSignInAlt />
           Logout
-        </button>
+        </div>
       </div>
 
       {!form.open && <AdminOverView />}

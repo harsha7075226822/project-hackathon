@@ -1,151 +1,8 @@
-// import React from 'react'
-// import { useState } from 'react'
-// import { Link, Navigate, useNavigate } from "react-router";
-// import { FaCode } from "react-icons/fa";
-// import Cookies from "js-cookie"
-
-// export default function SignUp() {
-
-//     const navigate = useNavigate()
-//     const [username, setUserName] = useState("")
-//     const [email, setEmail] = useState("")
-//     const [password, setPassword] = useState("")
-//     const [showErrorMsg, setShowErrMsg] = useState('')
-//     const [isErr, setIsErr] = useState(false)
-
-//     const handleUsername = (e) => setUserName(e.target.value)
-//     const handleEmail = (e) => setEmail(e.target.value)
-//     const handlePassword = (e) => setPassword(e.target.value)
-
-//     const onSubmitSuccess = () => {
-//       navigate("/signin", { replace: true })
-//     }
-
-//     const onSubmitFailure = (error) => {
-//       setIsErr(true)
-//       setShowErrMsg(error)
-//     }
-
-//     const handleSubmitForm = async (event) => {
-//         event.preventDefault()
-
-//         const userDetails = { username, email, password }
-
-//         const response = await fetch("https://project-hackathon-7utw.onrender.com/signup", {
-//           method: "POST",
-//           headers: { "Content-Type": "application/json" },
-//           body: JSON.stringify(userDetails)
-//         })
-
-//         const data = await response.json()
-
-//         if (response.ok) onSubmitSuccess()
-//         else onSubmitFailure(data.message)
-//     }
-
-//     const jwtToken = Cookies.get("jwt_token")
-//     if (jwtToken !== undefined) {
-//       navigate("/",{replace:true})
-//     }
-//     else {
-//       navigate("/signin",{replace:true})
-//     }
-
-//     const handleHome = () => navigate("/", { replace: true })
-
-//     return (
-//       <div className="min-h-screen w-full bg-[#023e8a] bg-cover bg-center relative flex items-center justify-center px-4 sm:px-6">
-        
-//         <div className="absolute inset-0 bg-black/20"></div>
-
-//         <header className="absolute top-4 left-4 sm:top-6 sm:left-10 z-20">
-//           <div className='flex'>
-//             <FaCode size={38} className='text-white mt-1' />
-//             <h1 className='text-4xl font-bold text-white'>HackNext</h1>
-//           </div>
-//           <button onClick={handleHome} className="border-2 bg-white p-2 rounded-lg cursor-pointer">back</button>
-//         </header>
-
-//         <div className="flex h-[480px]">
-
-//           <div className="relative z-10 bg-white sm:p-8 md:p-10 rounded-l-xl w-full max-w-[340px] border border-white flex flex-col justify-center">
-//             <h1 className="text-3xl font-bold text-center mb-5">Register</h1>
-
-//             <form className="flex flex-col space-y-4" onSubmit={handleSubmitForm}>
-
-//               <div>
-//                 <label className="text-black text-xs sm:text-sm font-semibold">USERNAME</label>
-//                 <input
-//                   type="text"
-//                   placeholder="Enter full name"
-//                   value={username}
-//                   className="w-full p-2 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-//                   onChange={handleUsername}
-//                 />
-//               </div>
-
-//               <div>
-//                 <label className="text-black text-xs sm:text-sm font-semibold">EMAIL</label>
-//                 <input
-//                   type="text"
-//                   placeholder="Enter email"
-//                   value={email}
-//                   className="w-full p-2 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-//                   onChange={handleEmail}
-//                 />
-//               </div>
-
-//               <div>
-//                 <label className="text-black text-xs sm:text-sm font-semibold">PASSWORD</label>
-//                 <input
-//                   type="password"
-//                   placeholder="Enter password"
-//                   value={password}
-//                   className="w-full p-2 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-//                   onChange={handlePassword}
-//                 />
-//               </div>
-
-//               <div className="min-h-[20px]">
-//                 {isErr && (
-//                   <p className="text-red-500 text-sm">{showErrorMsg}</p>
-//                 )}
-//               </div>
-
-//               <button
-//                 type="submit"
-//                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition cursor-pointer"
-//               >
-//                 Create Account
-//               </button>
-
-//             </form>
-
-//             <p className="text-black pt-5 text-center">
-//               Already have an Account?{" "}
-//               <Link to={"/signin"} className="text-blue-600">Login</Link>
-//             </p>
-
-//           </div>
-
-//           <div>
-//             <img
-//               className="h-full rounded-r-2xl brightness-120"
-//               src="https://res.cloudinary.com/dcttatiuj/image/upload/v1764924849/Screenshot_2025-12-05_142313_e2uc0p.png"
-//               alt="Signup Visual"
-//             />
-//           </div>
-
-//         </div>
-//       </div>
-//     );
-// }
-
-
 import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import { FaCode } from "react-icons/fa";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -197,100 +54,121 @@ export default function SignUp() {
     }
   };
 
-  /* ✅ AUTH REDIRECT (CORRECT WAY) */
   const jwtToken = Cookies.get("jwt_token");
   if (jwtToken !== undefined) {
-    return <Navigate to="/" replace />;
+    toast.success("User already logged in");
+    return <Navigate to="/user/allevents" replace />;
   }
 
   const handleHome = () => navigate("/", { replace: true });
 
   return (
-    <div className="min-h-screen w-full bg-[#023e8a] bg-cover bg-center relative flex items-center justify-center px-4 sm:px-6">
-      <div className="absolute inset-0 bg-black/20"></div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#0f1225] to-[#14172e] relative flex items-center justify-center px-4">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/30"></div>
 
-      <header className="absolute top-4 left-4 sm:top-6 sm:left-10 z-20">
+      {/* Header */}
+      <header className="absolute top-6 left-6 z-20">
         <div className="flex items-center gap-2">
-          <FaCode size={38} className="text-white" />
-          <h1 className="text-4xl font-bold text-white">HackNext</h1>
+          <FaCode size={34} className="text-indigo-400" />
+          <h1 className="text-3xl font-bold text-white">HackNext</h1>
         </div>
         <button
           onClick={handleHome}
-          className="mt-2 border-2 bg-white px-3 py-1 rounded-lg cursor-pointer"
+          className="mt-2 text-sm px-4 py-1 rounded-lg border border-white/20 text-gray-200 hover:border-white/40 transition"
         >
           Back
         </button>
       </header>
 
-      <div className="flex h-[480px]">
-        <div className="relative z-10 bg-white sm:p-8 md:p-10 rounded-l-xl w-full max-w-[340px] border border-white flex flex-col justify-center">
-          <h1 className="text-3xl font-bold text-center mb-5">Register</h1>
+      {/* Card Wrapper */}
+      <div className="relative z-10 flex shadow-2xl rounded-2xl overflow-hidden">
+        {/* Form Card */}
+        <div className="bg-white/5 backdrop-blur-md p-8 w-[360px] border border-white/10">
+          <h1 className="text-2xl font-bold text-center text-white mb-6">
+            Create Account
+          </h1>
 
-          <form className="flex flex-col space-y-4" onSubmit={handleSubmitForm}>
+          <form
+            className="flex flex-col space-y-5"
+            onSubmit={handleSubmitForm}
+          >
+            {/* Username */}
             <div>
-              <label className="text-black text-xs sm:text-sm font-semibold">
+              <label className="text-gray-300 text-xs font-semibold">
                 USERNAME
               </label>
-              <input
-                type="text"
-                placeholder="Enter full name"
-                value={username}
-                className="w-full p-2 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                onChange={handleUsername}
-              />
+              <div className="mt-1 p-[1.5px] rounded-lg bg-white/10 focus-within:bg-gradient-to-r focus-within:from-indigo-500 focus-within:to-violet-600 transition">
+                <input
+                  type="text"
+                  placeholder="Enter full name"
+                  value={username}
+                  onChange={handleUsername}
+                  className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
+                />
+              </div>
             </div>
 
+            {/* Email */}
             <div>
-              <label className="text-black text-xs sm:text-sm font-semibold">
+              <label className="text-gray-300 text-xs font-semibold">
                 EMAIL
               </label>
-              <input
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                className="w-full p-2 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                onChange={handleEmail}
-              />
+              <div className="mt-1 p-[1.5px] rounded-lg bg-white/10 focus-within:bg-gradient-to-r focus-within:from-indigo-500 focus-within:to-violet-600 transition">
+                <input
+                  type="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={handleEmail}
+                  className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
+                />
+              </div>
             </div>
 
+            {/* Password */}
             <div>
-              <label className="text-black text-xs sm:text-sm font-semibold">
+              <label className="text-gray-300 text-xs font-semibold">
                 PASSWORD
               </label>
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                className="w-full p-2 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                onChange={handlePassword}
-              />
+              <div className="mt-1 p-[1.5px] rounded-lg bg-white/10 focus-within:bg-gradient-to-r focus-within:from-indigo-500 focus-within:to-violet-600 transition">
+                <input
+                  type="password"
+                  placeholder="Create new password"
+                  value={password}
+                  onChange={handlePassword}
+                  className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
+                />
+              </div>
             </div>
 
+            {/* Error */}
             <div className="min-h-[20px]">
               {isErr && (
-                <p className="text-red-500 text-sm">{showErrorMsg}</p>
+                <p className="text-rose-400 text-sm">{showErrorMsg}</p>
               )}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition cursor-pointer"
+              className="mt-2 py-3 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 text-white font-semibold transition"
             >
               Create Account
             </button>
           </form>
 
-          <p className="text-black pt-5 text-center">
-            Already have an Account?{" "}
-            <Link to="/signin" className="text-blue-600">
+          <p className="text-gray-300 pt-5 text-center text-sm">
+            Already have an account?{" "}
+            <Link to="/signin" className="text-indigo-400 hover:underline">
               Login
             </Link>
           </p>
         </div>
 
-        <div>
+        {/* Image */}
+        <div className="hidden md:block">
           <img
-            className="h-full rounded-r-2xl brightness-120"
+            className="h-full w-[420px] object-cover"
             src="https://res.cloudinary.com/dcttatiuj/image/upload/v1764924849/Screenshot_2025-12-05_142313_e2uc0p.png"
             alt="Signup Visual"
           />

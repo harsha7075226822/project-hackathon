@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 
-
 function CreateProjectAdmin() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({

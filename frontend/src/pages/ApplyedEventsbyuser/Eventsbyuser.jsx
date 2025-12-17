@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { FaMapMarkerAlt, FaExternalLinkAlt } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaExternalLinkAlt,
+  FaCalendarAlt,
+  FaUsers,
+  FaUniversity,
+  FaEnvelope,
+  FaPhoneAlt
+} from "react-icons/fa";
 import { FcAbout } from "react-icons/fc";
-import { useNavigate } from 'react-router';
+import { useNavigate } from "react-router";
 import { ThreeDot } from "react-loading-indicators";
 
 function Eventsbyuser() {
-
   const [appliedData, setAppliedData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,13 +22,14 @@ function Eventsbyuser() {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const url = "https://project-hackathon-7utw.onrender.com/user/appliedevents";
+        const url =
+          "https://project-hackathon-7utw.onrender.com/user/appliedevents";
         const options = {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${Cookies.get("jwt_token")}`
-          }
+            Authorization: `Bearer ${Cookies.get("jwt_token")}`,
+          },
         };
 
         const response = await fetch(url, options);
@@ -40,7 +48,7 @@ function Eventsbyuser() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <ThreeDot color="#3b82f6" size="medium" />
+        <ThreeDot color="#6366f1" size="medium" />
       </div>
     );
   }
@@ -53,7 +61,9 @@ function Eventsbyuser() {
           alt="No Applied Events"
           className="w-64 opacity-70"
         />
-        <h2 className="mt-6 text-xl font-semibold">No Applied Events Found</h2>
+        <h2 className="mt-6 text-xl font-semibold">
+          No Applied Events Found
+        </h2>
       </div>
     );
   }
@@ -63,63 +73,71 @@ function Eventsbyuser() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 px-6 py-10 pt-20">
-      <h1 className="text-4xl font-bold text-center text-white mb-10">
-        <span className="text-blue-500">Applied</span> Events
+    <div className="min-h-screen bg-gray-950 px-6 py-20">
+      <h1 className="text-4xl font-bold text-center text-white mb-12">
+        <span className="text-indigo-400">Applied</span> Events
       </h1>
 
-      <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {appliedData.map((each, id) => (
           <li
             key={id}
-            className="group bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+            className="rounded-2xl bg-gradient-to-br from-[#0f1225] to-[#14172e] p-6 text-white shadow-xl hover:shadow-2xl transition-all hover:shadow-blue-900/40 transform hover:scale-[1.02] animate-slideUp"
           >
-            {/* Header */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="bg-yellow-600/90 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                {each.eventTitle?.toUpperCase()}
-              </span>
-              <span className="bg-purple-600/90 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                {each.eventType?.toUpperCase()}
-              </span>
-              <span className="bg-green-600/90 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                Applied
+            {/* Status + Title */}
+            <div className="flex justify-between items-start mb-4">
+              <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                ✓ Applied
               </span>
             </div>
+
+            <h3 className="text-indigo-400 font-semibold mb-3">
+              Event Details
+            </h3>
+            
+            <h2 className="text-xl font-bold mb-3">
+              {each.eventTitle}
+            </h2>
 
             {/* Description */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 text-gray-400 text-sm mb-5">
               <FcAbout className="mt-1" />
-              <p className="text-gray-400 text-sm leading-relaxed">
-                {each.ideaDescription}
-              </p>
+              <p className="line-clamp-3">{each.ideaDescription}</p>
             </div>
 
-            <hr className="border-gray-800 my-4" />
-
-            {/* Member Details */}
-            <h3 className="text-blue-400 font-semibold mb-2">Applicant Details</h3>
-            <div className="text-gray-400 text-sm space-y-1">
-              <p><span className="text-gray-300">Name:</span> {each.fullName}</p>
-              <p><span className="text-gray-300">Email:</span> {each.email}</p>
-              <p><span className="text-gray-300">Institute:</span> {each.institution}</p>
-              <p><span className="text-gray-300">Phone:</span> {each.phoneNumber}</p>
-              <p><span className="text-gray-300">Team:</span> {each.teamName}</p>
-              <p><span className="text-gray-300">Members:</span> {each.membersCount}</p>
+            {/* Dates */}
+            <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
+              <FaCalendarAlt />
+              <span>
+                {each.StartDate?.split("T")[0]} —{" "}
+                {each.EndDate?.split("T")[0]}
+              </span>
             </div>
 
-            <hr className="border-gray-800 my-4" />
+            {/* Divider */}
+            <hr className="border-white/10 my-4" />
 
-            {/* Event Details */}
-            <h3 className="text-blue-400 font-semibold mb-2">Event Details</h3>
-            <div className="text-gray-400 text-sm space-y-1">
-              <p>
-                <span className="text-gray-300">Start:</span>{" "}
-                {each.StartDate ? each.StartDate.split("T")[0] : "N/A"}
+            {/* Applicant Details */}
+            <h3 className="text-indigo-400 font-semibold mb-3">
+              Application Details
+            </h3>
+
+            <div className="space-y-2 text-sm text-gray-300">
+              <p className="flex items-center gap-2">
+                <FaUsers /> {each.fullName}
+              </p>
+              <p className="flex items-center gap-2">
+                <FaEnvelope /> {each.email}
+              </p>
+              <p className="flex items-center gap-2">
+                <FaUniversity /> {each.institution}
+              </p>
+              <p className="flex items-center gap-2">
+                <FaPhoneAlt /> {each.phoneNumber}
               </p>
               <p>
-                <span className="text-gray-300">End:</span>{" "}
-                {each.EndDate ? each.EndDate.split("T")[0] : "N/A"}
+                <span className="text-gray-400">Team:</span>{" "}
+                {each.teamName} ({each.membersCount} members)
               </p>
             </div>
 
@@ -127,7 +145,8 @@ function Eventsbyuser() {
             <div className="flex items-center gap-2 text-gray-400 text-sm mt-4">
               <FaMapMarkerAlt />
               <span>
-                {each.Venue || "Unknown Venue"}, {each.EventCity || "Unknown City"}
+                {each.Venue || "Unknown Venue"},{" "}
+                {each.EventCity || "Unknown City"}
               </span>
             </div>
 
@@ -136,7 +155,7 @@ function Eventsbyuser() {
               {each.skills?.split(",").map((skill, index) => (
                 <span
                   key={index}
-                  className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs font-medium"
+                  className="bg-indigo-600/20 text-indigo-400 px-3 py-1 rounded-full text-xs"
                 >
                   {skill.trim()}
                 </span>
@@ -147,9 +166,9 @@ function Eventsbyuser() {
             <div className="flex justify-end mt-6">
               <button
                 onClick={() => handleViewDetails(each.event)}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition"
+                className="flex items-center gap-2 border cursor-pointer border-white/10 hover:border-white/30 hover:bg-gradient-to-r hover:from-blue-500 hover:to-violet-600 px-5 py-2 rounded-xl text-sm transition"
               >
-                View Details <FaExternalLinkAlt size={12} />
+                View Event <FaExternalLinkAlt size={12} />
               </button>
             </div>
           </li>

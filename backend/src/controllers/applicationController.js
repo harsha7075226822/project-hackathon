@@ -23,7 +23,7 @@ export const applyForEvent = async (req, res) => {
     }
 
     const deadline = new Date(event.StartDate);
-    deadline.setDate(deadline.getDate() - 5);
+    deadline.setDate(deadline.getDate() - 1);
 
     if (new Date() >= deadline) {
       return res.status(400).json({ message: "Registration deadline has passed" });

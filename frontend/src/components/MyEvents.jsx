@@ -5,24 +5,31 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import CounterContext from "../contextApi/TotalCountsContext";
 import Cookies from "js-cookie";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { ThreeDot } from "react-loading-indicators";
+import toast from "react-hot-toast";
+
 
 function MyEvents({ setForm, dropValue }) {
   const [MyEventsdata, setMyEventsdata] = useState([]);
   const [Projectdata, setProjectData] = useState([]);
   const { setCount } = useContext(CounterContext);
+  const [loading, setLoading] = useState(true);
 
   // Fetch Events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("https://project-hackathon-7utw.onrender.com/events/my", {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${Cookies.get("admin_token")}`,
-          },
-        });
+        const response = await fetch(
+          "https://project-hackathon-7utw.onrender.com/events/my",
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("admin_token")}`,
+            },
+          }
+        );
         const data = await response.json();
 
         if (!response.ok) {
@@ -30,12 +37,13 @@ function MyEvents({ setForm, dropValue }) {
           setMyEventsdata([]);
           return;
         }
-        console.log(data)
 
         setMyEventsdata(data.events || []);
       } catch (error) {
         console.error("Fetch error:", error);
         setMyEventsdata([]);
+      } finally {
+        setLoading(false); 
       }
     };
     fetchEvents();
@@ -45,14 +53,17 @@ function MyEvents({ setForm, dropValue }) {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch("https://project-hackathon-7utw.onrender.com/projects", {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${Cookies.get("admin_token")}`,
-          },
-        });
+        const response = await fetch(
+          "https://project-hackathon-7utw.onrender.com/projects",
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("admin_token")}`,
+            },
+          }
+        );
         const data = await response.json();
 
         if (!response.ok) {
@@ -62,7 +73,6 @@ function MyEvents({ setForm, dropValue }) {
         }
 
         setProjectData(data.events || []);
-        console.log(data)
       } catch (error) {
         console.error("Fetch error:", error);
         setProjectData([]);
@@ -71,22 +81,33 @@ function MyEvents({ setForm, dropValue }) {
     fetchProjects();
   }, []);
 
-  // Count Update
   useEffect(() => {
     setCount(MyEventsdata.length);
   }, [MyEventsdata]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[300px]">
+        <div className="absolute flex items-center justify-center bg-black/40">
+              <ThreeDot color="#ffffff" />
+            </div>
+      </div>
+    );
+  }
 
   // Delete Event
   const handleDeleteEachItem = async (id) => {
-    const res = await fetch(`https://project-hackathon-7utw.onrender.com/events/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${Cookies.get("admin_token")}`,
-      },
-    });
+    const res = await fetch(
+      `https://project-hackathon-7utw.onrender.com/events/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("admin_token")}`,
+        },
+      }
+    );
     if (res.ok) {
       setMyEventsdata((prev) => prev.filter((item) => item._id !== id));
     } else {
@@ -96,14 +117,18 @@ function MyEvents({ setForm, dropValue }) {
 
   // Delete Project
   const handleDeleteProject = async (id) => {
-    const res = await fetch(`https://project-hackathon-7utw.onrender.com/projects/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${Cookies.get("admin_token")}`,
-      },
-    });
+    const res = await fetch(
+      `https://project-hackathon-7utw.onrender.com/projects/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("admin_token")}`,
+        },
+      }
+    );
+    toast.success("event deleted")
     if (res.ok) {
       setProjectData((prev) => prev.filter((item) => item._id !== id));
     } else {
@@ -116,19 +141,27 @@ function MyEvents({ setForm, dropValue }) {
     if (!dateString) return "";
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
     return `${monthNames[date.getMonth()]} ${day}, ${date.getFullYear()}`;
   };
-
 
   const EventCard = ({ each }) => (
     <li className="m-2 w-full">
       <div className="bg-gray-900 text-white p-6 rounded-xl shadow-md w-full max-w-xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold">{each.EventTitle.toUpperCase()}</h2>
-            <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded-full">{each.Organizer}</span>
-            <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">{each.EventType}</span>
+            <h2 className="text-xl font-semibold">
+              {each.EventTitle.toUpperCase()}
+            </h2>
+            <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded-full">
+              {each.Organizer}
+            </span>
+            <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">
+              {each.EventType}
+            </span>
           </div>
 
           <div className="flex gap-2 text-gray-400">
@@ -149,17 +182,25 @@ function MyEvents({ setForm, dropValue }) {
         </div>
 
         <div className="flex">
-          <span className="m-1"><FcAbout /></span>
-          <p className="text-gray-400 text-sm mb-4">{each.EventDescription}</p>
+          <span className="m-1">
+            <FcAbout />
+          </span>
+          <p className="text-gray-400 text-sm mb-4">
+            {each.EventDescription}
+          </p>
         </div>
 
         <div className="flex items-center gap-3 text-gray-400 text-sm mb-4">
           <FaCalendarAlt />
-          <span>{formatDate(each.StartDate)} - {formatDate(each.EndDate)}</span>
+          <span>
+            {formatDate(each.StartDate)} - {formatDate(each.EndDate)}
+          </span>
 
           <div className="flex items-center gap-1">
             <FaMapMarkerAlt />
-            <span>{each.Venue}, {each.City}, {each.State}</span>
+            <span>
+              {each.Venue}, {each.City}, {each.State}
+            </span>
           </div>
 
           <div className="flex items-center gap-1">
@@ -170,7 +211,10 @@ function MyEvents({ setForm, dropValue }) {
 
         <ul className="flex gap-2 flex-wrap">
           {each.SpecifiedStacks?.split(",").map((stack, index) => (
-            <li key={index} className="bg-blue-600 px-3 py-1 rounded-full text-xs">
+            <li
+              key={index}
+              className="bg-blue-600 px-3 py-1 rounded-full text-xs"
+            >
               {stack.trim()}
             </li>
           ))}
@@ -185,11 +229,12 @@ function MyEvents({ setForm, dropValue }) {
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-semibold">{each.title}</h2>
 
-          <div>
-            <button onClick={() => handleDeleteProject(each._id)} className="hover:text-white text-gray-400 cursor-pointer">
-              <FiTrash2 size={18} />
-            </button>
-          </div>
+          <button
+            onClick={() => handleDeleteProject(each._id)}
+            className="hover:text-white text-gray-400 cursor-pointer"
+          >
+            <FiTrash2 size={18} />
+          </button>
         </div>
 
         <p className="text-gray-400 text-sm mb-4">{each.description}</p>
@@ -220,24 +265,32 @@ function MyEvents({ setForm, dropValue }) {
         <>
           {dropValue === "Projects" ? (
             <ul className="flex flex-col items-start">
-              {Projectdata.map((each) => <ProjectCard key={each._id} each={each} />)}
+              {Projectdata.map((each) => (
+                <ProjectCard key={each._id} each={each} />
+              ))}
             </ul>
           ) : (
             <ul className="flex flex-col items-start">
-              {MyEventsdata.filter((e) => e.EventType === dropValue).map((each) => (
-                <EventCard key={each._id} each={each} />
-              ))}
+              {MyEventsdata
+                .filter((e) => e.EventType === dropValue)
+                .map((each) => (
+                  <EventCard key={each._id} each={each} />
+                ))}
             </ul>
           )}
         </>
       ) : (
         <div>
           <ul className="flex flex-col items-start">
-            {MyEventsdata.map((each) => <EventCard key={each._id} each={each} />)}
+            {MyEventsdata.map((each) => (
+              <EventCard key={each._id} each={each} />
+            ))}
           </ul>
 
           <ul className="flex flex-col items-start">
-            {Projectdata.map((each) => <ProjectCard key={each._id} each={each} />)}
+            {Projectdata.map((each) => (
+              <ProjectCard key={each._id} each={each} />
+            ))}
           </ul>
         </div>
       )}

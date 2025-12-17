@@ -4,13 +4,16 @@ import { Navigate, useNavigate, Link } from "react-router";
 import { FaCode } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { FaAngleLeft } from "react-icons/fa";
+import { ThreeDot } from "react-loading-indicators";
 
 const SignIn = () => {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showErrorMsg, setShowErrMsg] = useState("");
   const [isErr, setIsErr] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const handleEmail = (e) => setEmail(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
@@ -32,16 +35,19 @@ const SignIn = () => {
     event.preventDefault();
     const userDetails = { email, password };
 
-    const response = await fetch("https://project-hackathon-7utw.onrender.com/signin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userDetails),
-    });
+    const response = await fetch(
+      "https://project-hackathon-7utw.onrender.com/signin",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userDetails),
+      }
+    );
 
     const data = await response.json();
-
-    if (response.ok === true) onSubmitSuccess(data.jwt_token);
-    else onSubmitFailure(data.message);
+    response.ok
+      ? onSubmitSuccess(data.jwt_token)
+      : onSubmitFailure(data.message);
   };
 
   const handleHome = () => navigate("/", { replace: true });
@@ -50,87 +56,128 @@ const SignIn = () => {
   if (jwtToken !== undefined) return <Navigate to="/user/allevents" />;
 
   return (
-    <div className="min-h-screen w-full bg-[#023e8a] bg-cover bg-center relative flex items-center justify-center px-4 sm:px-6">
-      <div className="absolute inset-0 bg-black/20"></div>
+    <div className="min-h-screen w-full relative flex items-center justify-center px-4 bg-gradient-to-br from-[#0f1225] to-[#14172e] overflow-hidden">
 
-      <header className="absolute top-4 left-4 sm:top-6 sm:left-10 z-20 flex">
-        <FaCode size={38} className="text-white mt-1" />
-        <h1 className="text-4xl font-bold text-white">HackNext</h1>
+      {/* Glow Background */}
+      <div className="absolute inset-0 -z-10">
+        <div
+          className="absolute top-[-30%] left-1/2 -translate-x-1/2
+          w-[900px] h-[900px] rounded-full
+          bg-[radial-gradient(circle,_rgba(99,102,241,0.35)_0%,_rgba(99,102,241,0.15)_35%,_rgba(15,23,42,0)_65%)]
+          blur-[120px]"
+        />
+        <div
+          className="absolute bottom-[-40%] left-[60%]
+          w-[700px] h-[700px] rounded-full
+          bg-[radial-gradient(circle,_rgba(139,92,246,0.25)_0%,_rgba(15,23,42,0)_60%)]
+          blur-[140px]"
+        />
+      </div>
+
+      {/* Logo */}
+      <header className="absolute top-6 left-10 z-20 flex items-center gap-2">
+        <FaCode size={34} className="text-indigo-400" />
+        <h1 className="text-3xl font-bold text-white tracking-wide">
+          HackNext
+        </h1>
       </header>
 
-      
-      <div className="flex h-[470px]">
+      {/* CARD */}
+      <div className="relative z-10 flex h-[470px] w-[760px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5 backdrop-blur-md">
 
-        <div>
+        {/* IMAGE */}
+        <div className="relative w-1/2 hidden md:block">
+          {imageLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+              <ThreeDot color="#ffffff" />
+            </div>
+          )}
+
           <img
-            className="h-full rounded-l-2xl brightness-170"
             src="https://res.cloudinary.com/dcttatiuj/image/upload/v1764923422/ChatGPT_Image_Dec_5_2025_02_00_01_PM_janplh.png"
             alt="Login Visual"
+            onLoad={() => setImageLoading(false)}
+            onError={() => setImageLoading(false)}
+            className={`h-full w-full object-cover transition-opacity duration-700
+              ${imageLoading ? "opacity-0" : "opacity-100"}`}
           />
         </div>
 
-        <div className="relative z-10 bg-white p-6 sm:p-8 md:p-10 rounded-r-xl w-full max-w-[360px] border border-white/40 flex flex-col justify-center">
-          <h1 className="text-4xl font-bold text-center mb-2">
+        {/* FORM */}
+        <div className="w-full md:w-1/2 p-8 flex flex-col justify-center text-white">
+          <h1 className="text-3xl font-bold text-center mb-2">
             Student Login
           </h1>
-          <p className="text-xs text-center mb-5 mt-3">
-            Hey enter your details to sign in to your account
+
+          <p className="text-xs text-center mb-6 text-gray-400">
+            Enter your credentials to access your account
           </p>
 
           <form className="flex flex-col space-y-5" onSubmit={handleSubmitForm}>
-            
+            {/* Email */}
             <div>
-              <label className="text-black text-xs sm:text-sm font-semibold">
+              <label className="text-xs font-semibold text-gray-300">
                 EMAIL
               </label>
-              <input
-                type="text"
-                placeholder="Enter Email"
-                value={email}
-                className="w-full p-2 mt-1 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                onChange={handleEmail}
-              />
+              <div className="mt-1 p-[1.5px] rounded-lg bg-white/10 focus-within:bg-gradient-to-r focus-within:from-indigo-500 focus-within:to-violet-600 transition">
+                <input
+                  type="text"
+                  placeholder="Enter Email"
+                  value={email}
+                  onChange={handleEmail}
+                  className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
+                />
+              </div>
             </div>
 
-            
+            {/* Password */}
             <div>
-              <label className="text-black text-xs sm:text-sm font-semibold">
+              <label className="text-xs font-semibold text-gray-300">
                 PASSWORD
               </label>
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                className="w-full p-2 mt-1 bg-gray-300/80 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                onChange={handlePassword}
-              />
+              <div className="mt-1 p-[1.5px] rounded-lg bg-white/10 focus-within:bg-gradient-to-r focus-within:from-indigo-500 focus-within:to-violet-600 transition">
+                <input
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={handlePassword}
+                  className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
+                />
+              </div>
             </div>
 
-            
+            {/* Error */}
             <div className="min-h-[20px]">
               {isErr && (
-                <p className="text-red-500 text-sm">{showErrorMsg}</p>
+                <p className="text-rose-400 text-sm">{showErrorMsg}</p>
               )}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition cursor-pointer"
+              className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90 text-white font-semibold py-3 rounded-xl transition"
             >
               Login
             </button>
           </form>
 
-          <p className="text-black pt-5">
-            Don't have an account?{" "}
-            <Link to={"/signup"} className="text-blue-500">
+          <p className="text-sm pt-5 text-center text-gray-400">
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-indigo-400 font-semibold hover:underline"
+            >
               Signup now
             </Link>
           </p>
 
-          <div className="flex cursor-pointer" onClick={handleHome}>
-            <FaAngleLeft className="mt-1.5" />
-            <p>back</p>
+          <div
+            className="flex items-center gap-1 cursor-pointer mt-3 justify-center text-gray-400 hover:text-white transition"
+            onClick={handleHome}
+          >
+            <FaAngleLeft />
+            <p>Back</p>
           </div>
         </div>
       </div>

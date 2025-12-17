@@ -60,7 +60,7 @@ function InputElement() {
               onClick={scrollToEvents}
               className="flex items-center gap-2 px-8 py-3 rounded-xl font-semibold
                          bg-gradient-to-r from-violet-500 to-blue-500
-                         hover:opacity-90 transition shadow-lg shadow-violet-500/30"
+                         hover:opacity-90 transition shadow-lg shadow-violet-500/30 cursor-pointer"
             >
               <FaLightbulb />
               Explore Events
@@ -70,7 +70,7 @@ function InputElement() {
               onClick={handleProjects}
               className="flex items-center gap-2 px-8 py-3 rounded-xl font-semibold
                          bg-[#0F172A] hover:bg-[#111827] transition
-                         border border-slate-700 text-slate-200"
+                         border border-slate-700 text-slate-200 cursor-pointer"
             >
               <FaProjectDiagram />
               Browse Projects
@@ -147,7 +147,7 @@ function InputElement() {
       </section>
 
       {/* EVENTS LIST */}
-      <section className="px-6 pt-12 max-w-7xl mx-auto">
+      <section className=" pt-12 max-w-7xl mx-auto">
         <AllEventsPage
           searchQuery={searchQuery}
           eventType={eventType}
