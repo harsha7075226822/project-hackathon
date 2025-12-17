@@ -54,25 +54,59 @@ const Home = () => {
       <section className="min-h-screen flex flex-col items-center justify-center px-6 relative">
         <h1 className="absolute top-6 left-10 text-3xl font-bold">&lt;/&gt;</h1>
 
+
         <button
           onClick={handleUserEvents}
-          className="absolute cursor-pointer top-7 font-bold right-36 text-sm text-gray-300"
+          className="
+            absolute top-7 right-40
+            cursor-pointer font-bold text-sm text-gray-300
+            transition-all duration-200 ease-out
+            hover:scale-115 hover:text-white
+            hover:drop-shadow-[0_6px_15px_rgba(255,255,255,0.25)]
+            active:scale-95
+          "
         >
-          sign in
+          Sign in
         </button>
 
         <button
           onClick={handleUserEvent}
-          className="absolute cursor-pointer top-6 font-bold right-10 border-2 border-white rounded-xl px-3 py-1 text-sm"
+          className="
+            absolute top-6 right-10
+            cursor-pointer font-bold text-sm
+            border-2 border-white rounded-xl px-3 py-1
+            transition-all duration-200 ease-out
+            hover:scale-115 hover:shadow-[0_8px_25px_rgba(99,102,241,0.45)]
+            hover:bg-white hover:text-black
+            active:scale-95
+          "
         >
-          sign up →
+          Sign up →
         </button>
+
+
 
         <button className="px-4 py-2 text-sm rounded-full bg-gradient-to-r from-purple-600 to-blue-600 mt-4">
           🚀 Discover Your Next Tech Adventure
         </button>
 
-        <h1 className="text-6xl font-bold mt-10">HackNext</h1>
+        <h1
+          className="
+            text-6xl font-bold mt-10
+            transition-all duration-300 ease-out
+
+            text-white
+            hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600
+            hover:bg-clip-text hover:text-transparent
+
+            hover:scale-105
+            hover:drop-shadow-[0_6px_15px_rgba(0,0,0,0.35)]
+            active:scale-100
+          "
+        >
+          HackNext
+        </h1>
+
 
         <p className="text-gray-300 text-lg max-w-2xl text-center mt-6">
           Your gateway to hackathons, workshops, and tech competitions. Discover

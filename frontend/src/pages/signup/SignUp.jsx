@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from "react-router";
 import { FaCode } from "react-icons/fa";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function SignUp() {
   const handleUsername = (e) => setUserName(e.target.value);
   const handleEmail = (e) => setEmail(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
+
+
+  const jwtToken = Cookies.get("jwt_token");
 
   const onSubmitSuccess = () => {
     navigate("/signin", { replace: true });
@@ -54,9 +58,15 @@ export default function SignUp() {
     }
   };
 
-  const jwtToken = Cookies.get("jwt_token");
+
+  useEffect(() => {
+    if (jwtToken) {
+      toast.success("User already logged in", { id: "already-logged-in" });
+    }
+  }, [jwtToken]);
+
   if (jwtToken !== undefined) {
-    toast.success("User already logged in");
+    // toast.success("User already logged in");
     return <Navigate to="/user/allevents" replace />;
   }
 
