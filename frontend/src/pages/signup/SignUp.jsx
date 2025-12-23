@@ -14,40 +14,9 @@ export default function SignUp() {
   const [showErrorMsg, setShowErrMsg] = useState("");
   const [isErr, setIsErr] = useState(false);
 
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [emailError, setEmailError] = useState("");
-
-  const handleUsername = (e) => {
-    const value = e.target.value;
-    setUserName(value);
-    if (value.length > 0 && (value.length < 4 || value.length > 20)) {
-      setUsernameError("Username must be 4-15 characters");
-    } else {
-      setUsernameError("");
-    }
-  };
-
-  const handleEmail = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (value.length > 0 && !emailRegex.test(value)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
-  };
-
-  const handlePassword = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-    if (value.length > 0 && (value.length < 6 || value.length > 15)) {
-      setPasswordError("Password must be 6-15 characters");
-    } else {
-      setPasswordError("");
-    }
-  };
+  const handleUsername = (e) => setUserName(e.target.value);
+  const handleEmail = (e) => setEmail(e.target.value);
+  const handlePassword = (e) => setPassword(e.target.value);
 
 
   const jwtToken = Cookies.get("jwt_token");
@@ -55,9 +24,6 @@ export default function SignUp() {
   const onSubmitSuccess = () => {
     setIsErr(false);
     setShowErrMsg("");
-    setUsernameError("");
-    setEmailError("");
-    setPasswordError("");
     navigate("/signin", { replace: true });
     toast.success("Account Created", { duration: 2000 });
   };
@@ -71,9 +37,9 @@ export default function SignUp() {
     event.preventDefault();
 
     // Client-side validation
-    if (username.length < 4 || username.length > 15) {
+    if (username.length < 4 || username.length > 20) {
       setIsErr(true);
-      setShowErrMsg("Username must be between 4 and 15 characters");
+      setShowErrMsg("Username must be between 4 and 20 characters");
       return;
     }
 
@@ -167,15 +133,13 @@ export default function SignUp() {
                 <input
                   type="text"
                   name="username"
-                  placeholder="Enter full name"
+                  placeholder="Enter username"
                   value={username}
                   onChange={handleUsername}
+                  required
                   className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
                 />
               </div>
-              {usernameError && (
-                <p className="text-rose-400 text-xs mt-1">{usernameError}</p>
-              )}
             </div>
 
             <div>
@@ -189,12 +153,10 @@ export default function SignUp() {
                   placeholder="Enter email"
                   value={email}
                   onChange={handleEmail}
+                  required
                   className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
                 />
               </div>
-              {emailError && (
-                <p className="text-rose-400 text-xs mt-1">{emailError}</p>
-              )}
             </div>
 
 
@@ -208,12 +170,10 @@ export default function SignUp() {
                   placeholder="Create new password"
                   value={password}
                   onChange={handlePassword}
+                  required
                   className="w-full px-3 py-2 rounded-md bg-[#0f1225] text-gray-200 text-sm outline-none"
                 />
               </div>
-              {passwordError && (
-                <p className="text-rose-400 text-xs mt-1">{passwordError}</p>
-              )}
             </div>
 
 
@@ -226,7 +186,7 @@ export default function SignUp() {
 
             <button
               type="submit"
-              className="mt-2 py-3 cursor-pointer rounded-xl bg-indigo-600/80 hover:bg-indigo-600 text-white font-semibold transition"
+              className="mt-2 py-3 px-6 w-full h-12 cursor-pointer rounded-xl bg-indigo-600/80 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold transition duration-200 flex items-center justify-center"
             >
               Create Account
             </button>
@@ -252,3 +212,4 @@ export default function SignUp() {
     </div>
   );
 }
+

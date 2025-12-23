@@ -6,14 +6,15 @@ import { userModel } from "../models/userModels.js";
 export const signup = async (req, res) => {
   const { username, email, password } = req.body;
   const UserRules = z.object({
-    username: z.string().min(4).max(15),
+    username: z.string().min(4).max(20),
     email: z.email(),
     password: z.string().min(6).max(15)
   });
 
   const parsedData = UserRules.safeParse({ username, email, password });
   if (!parsedData.success) {
-    return res.status(400).json({ message: "Invalid input" });
+    const errors = parsedData.error.errors.map(err => `${err.path[0]}: ${err.message}`).join(', ');
+    return res.status(400).json({ message: `Validation failed: ${errors}` });
   }
 
   const existingUser = await userModel.findOne({ email });
