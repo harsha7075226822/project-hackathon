@@ -44,12 +44,23 @@ export const signin = async (req, res) => {
   res.status(200).json({ message: "Signin successful", jwt_token: token });
 };
 
+// export const getUserAccount = async (req, res) => {
+//   try {
+//     const user = await userModel.findOne({ userId: req.user.userId }).select("-password").lean();
+//     res.status(200).json({ userDetails: user });
+//   } catch (error) {
+//     console.error("Error fetching user account:", error);
+//     res.status(500).json({ message: "Server Error", error: error.message });
+//   }
+// };
+
 export const getUserAccount = async (req, res) => {
   try {
-    const user = await userModel.findOne({ userId: req.user.userId }).select("-password").lean();
-    res.status(200).json({ userDetails: user });
+    res.status(200).json({
+      userDetails: req.user,
+    });
   } catch (error) {
     console.error("Error fetching user account:", error);
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({ message: "Server Error" });
   }
 };

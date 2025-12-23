@@ -71,29 +71,29 @@ function AdminAcc() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1225] to-[#14172e] text-white pt-10">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f1225] to-[#14172e] text-white pt-6 md:pt-10">
       <AdminNavbar />
-      <div className="pt-20 p-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="pt-16 md:pt-20 p-4 md:p-8">
+        <div className="max-w-4xl mx-4 md:mx-auto">
           
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-2xl md:text-4xl font-bold mb-4">
               <span className="text-indigo-400">Admin</span> Profile
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-400 text-base md:text-lg">
               Manage your admin account details
             </p>
           </div>
 
           
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-8 hover:bg-white/10 transition-all duration-300">
             
-            <div className="flex items-center gap-6 mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
-                <FaShieldAlt className="text-white text-3xl" />
+            <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
+                <FaShieldAlt className="text-white text-2xl md:text-3xl" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-indigo-400 mb-2">Administrator</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-indigo-400 mb-2">Administrator</h2>
                 <p className="text-gray-400">System Administrator Account</p>
               </div>
             </div>
@@ -101,30 +101,30 @@ function AdminAcc() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
-              <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
+              <div className="bg-gray-900/50 p-4 md:p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
-                  <FaEnvelope className="text-indigo-400 text-xl" />
-                  <h3 className="text-lg font-semibold text-white">Email Address</h3>
+                  <FaEnvelope className="text-indigo-400 text-lg md:text-xl" />
+                  <h3 className="text-base md:text-lg font-semibold text-white">Email Address</h3>
                 </div>
-                <p className="text-gray-300 text-lg">{adminData?.email || "N/A"}</p>
+                <p className="text-gray-300 text-base md:text-lg">{adminData?.email || "N/A"}</p>
               </div>
 
               
-              <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
+              <div className="bg-gray-900/50 p-4 md:p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
-                  <FaUser className="text-indigo-400 text-xl" />
-                  <h3 className="text-lg font-semibold text-white">Account Type</h3>
+                  <FaUser className="text-indigo-400 text-lg md:text-xl" />
+                  <h3 className="text-base md:text-lg font-semibold text-white">Account Type</h3>
                 </div>
-                <p className="text-gray-300 text-lg">Administrator</p>
+                <p className="text-gray-300 text-base md:text-lg">Administrator</p>
               </div>
 
               
-              <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
+              <div className="bg-gray-900/50 p-4 md:p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
-                  <FaCalendarAlt className="text-indigo-400 text-xl" />
-                  <h3 className="text-lg font-semibold text-white">Member Since</h3>
+                  <FaCalendarAlt className="text-indigo-400 text-lg md:text-xl" />
+                  <h3 className="text-base md:text-lg font-semibold text-white">Member Since</h3>
                 </div>
-                <p className="text-gray-300 text-lg">
+                <p className="text-gray-300 text-base md:text-lg">
                   {adminData?.createdAt ? new Date(adminData.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -134,19 +134,19 @@ function AdminAcc() {
               </div>
 
               
-              <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
+              <div className="bg-gray-900/50 p-4 md:p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
-                  <FaShieldAlt className="text-indigo-400 text-xl" />
-                  <h3 className="text-lg font-semibold text-white">Admin ID</h3>
+                  <FaShieldAlt className="text-indigo-400 text-lg md:text-xl" />
+                  <h3 className="text-base md:text-lg font-semibold text-white">Admin ID</h3>
                 </div>
-                <p className="text-gray-300 text-lg font-mono">{adminData?._id || "N/A"}</p>
+                <p className="text-gray-300 text-base md:text-lg font-mono">{adminData?._id || "N/A"}</p>
               </div>
             </div>
 
           
-            <div className="mt-8 p-6 bg-indigo-900/20 rounded-xl border border-indigo-500/20">
-              <h3 className="text-xl font-bold text-indigo-400 mb-4">Account Information</h3>
-              <div className="space-y-3 text-gray-300">
+            <div className="mt-6 md:mt-8 p-4 md:p-6 bg-indigo-900/20 rounded-xl border border-indigo-500/20">
+              <h3 className="text-lg md:text-xl font-bold text-indigo-400 mb-4">Account Information</h3>
+              <div className="space-y-2 md:space-y-3 text-gray-300">
                 <p>• As an administrator, you have full access to manage events, projects, and user applications.</p>
                 <p>• You can create and manage hackathons, workshops, and tech events.</p>
                 <p>• Monitor user applications and manage the platform content.</p>

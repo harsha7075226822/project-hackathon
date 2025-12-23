@@ -107,25 +107,25 @@ const AdminDashboard = () => {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setForm({ open: false, event: null })}
-            className="px-4 py-2 md:px-6 md:py-2 bg-purple-600 rounded-lg shadow hover:bg-purple-700 transition"
+            className="px-4 py-2 md:px-6 md:py-2 cursor-pointer  bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition"
           >
             My Events
           </button>
           <button
             onClick={() => setForm({ open: true, event: null })}
-            className="px-4 py-2 md:px-6 md:py-2 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition"
+            className="px-4 py-2 md:px-6 md:py-2  cursor-pointer bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition"
           >
             + Create Event
           </button>
           <button
             onClick={handleCreateProject}
-            className="px-4 py-2 md:px-6 md:py-2 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition"
+            className="px-4 py-2 md:px-6 md:py-2  cursor-pointer bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition"
           >
             + Create Project
           </button>
         </div>
         <div>
-          <select className="bg-gray-700 p-2 rounded-xl text-sm md:text-base" value={drodownValue} onChange={(e)=>handleDropValue(e)} >
+          <select className="bg-gray-700 p-2 rounded-xl  cursor-pointer text-sm md:text-base" value={drodownValue} onChange={(e)=>handleDropValue(e)} >
             <option value={"All Events"} >All Events</option>
             <option value={"Hackathon"}>Hackathon</option>
             <option value={"Workshop"}>Workshop</option>

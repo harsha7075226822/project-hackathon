@@ -150,7 +150,7 @@ function AdminNavbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div className="fixed top-0 z-50 left-3 w-full">
+    <div className="fixed top-0 z-50 left-0 w-full">
       <nav className="flex justify-between items-center px-8 py-4 bg-black/95 backdrop-blur border-b border-gray-700 text-white">
         
         {/* LOGO */}

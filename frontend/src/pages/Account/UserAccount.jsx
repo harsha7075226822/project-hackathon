@@ -12,10 +12,13 @@ function UserAccount() {
   const [activeSection, setActiveSection] = useState("user");
   const [loading, setLoading] = useState(true);
 
+  console.log("hwello")
+  console.log(Cookies.get("jwt_token"))
+
   useEffect(() => {
     const fetchAccount = async () => {
       const response = await fetch(
-        "https://project-hackathon-7utw.onrender.com/user/account",
+        "http://localhost:5678/user/account",
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("jwt_token")}`,
@@ -30,6 +33,47 @@ function UserAccount() {
 
     fetchAccount();
   }, []);
+
+//   useEffect(() => {
+//   const fetchAccount = async () => {
+//     try {
+//       const token = Cookies.get("jwt_token");
+//       console.log(token)
+
+//       // 🔐 If no token, redirect
+//       if (!token) {
+//         navigate("/signin", { replace: true });
+//         return;
+//       }
+
+//       const response = await fetch(
+//         "http://localhost:5678/user/account",
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       // // 🔥 Handle 401 properly
+//       // if (response.status === 401) {
+//       //   Cookies.remove("jwt_token");
+//       //   navigate("/signin", { replace: true });
+//       //   return;
+//       // }
+
+//       const data = await response.json();
+//       setUserData(data.userDetails);
+//     } catch (error) {
+//       console.error("Account fetch error:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   fetchAccount();
+// }, [navigate]);
+
 
   if (loading) {
     return (
@@ -102,16 +146,17 @@ function UserAccount() {
                                bg-gradient-to-r from-indigo-500 to-violet-600
                                flex items-center justify-center text-3xl font-bold text-white"
                   >
-                    {userData.username[0].toUpperCase()}
+                    {userData?.username?.[0]?.toUpperCase()}
                   </div>
 
-                  <h2 className="text-2xl font-bold text-white">
-                    {userData.username}
+                 <h2 className="text-2xl font-bold text-white">
+                    {userData?.username}
                   </h2>
 
                   <p className="text-gray-400 mt-1">
-                    {userData.email}
+                    {userData?.email}
                   </p>
+
 
                   <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
                     <div className="bg-white/5 rounded-xl p-4 border border-white/10">

@@ -236,6 +236,7 @@ function AdminLogin() {
               <input
                 type="text"
                 placeholder="Enter email"
+                name='email'
                 value={email}
                 onChange={(e)=>setEmail(e.target.value)}
                 className="w-full mt-1 p-2 rounded bg-[#0f172a] text-white border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-600"

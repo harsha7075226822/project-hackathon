@@ -19,11 +19,13 @@ const SignIn = () => {
   const handlePassword = (e) => setPassword(e.target.value);
 
   const onSubmitSuccess = (jwtToken) => {
-    Cookies.set("jwt_token", jwtToken, { expires: 7 });
-    setIsErr(false);
-    navigate("/user/allevents", { replace: true });
-    toast.success("Student Login Successfully", { duration: 2000 });
-  };
+  Cookies.remove("jwt_token"); 
+  Cookies.set("jwt_token", jwtToken, { expires: 7 });
+
+  navigate("/user/allevents", { replace: true });
+  toast.success("Student Login Successfully", { duration: 2000 });
+};
+
 
   const onSubmitFailure = (errorMsg) => {
     setIsErr(true);
@@ -36,7 +38,7 @@ const SignIn = () => {
     const userDetails = { email, password };
 
     const response = await fetch(
-      "https://project-hackathon-7utw.onrender.com/signin",
+      "http://localhost:5678/signin",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
