@@ -41,9 +41,7 @@ function UserDetailsPage() {
         <div className="px-6 py-24 flex justify-center">
           <div className="w-full max-w-5xl">
             <div className="animate-slideUp flex flex-col items-center">
-              {/* PROFILE CARD */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8 shadow-xl w-full max-w-md text-center">
-                {/* Avatar */}
                 <div
                   className="w-20 h-20 mx-auto mb-4 rounded-full
                              bg-gradient-to-r from-indigo-500 to-violet-600

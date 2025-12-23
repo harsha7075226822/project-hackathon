@@ -208,16 +208,13 @@ function AdminLogin() {
   return (
     <div className="min-h-screen  w-full bg-gradient-to-br from-[#020617] via-[#020617] to-[#0f172a] flex items-center justify-center px-4">
 
-      {/* Header */}
-      <header className="absolute top-6 left-6 flex items-center gap-2">
+      <header  onClick={handleHome} className="absolute top-6 left-6 flex items-center gap-2">
         <FaCode size={34} className="text-blue-500" />
         <h1 className="text-3xl font-bold text-white tracking-wide">HackNext</h1>
       </header>
 
-      {/* Card */}
       <div className="flex shadow-2xl rounded-2xl overflow-hidden border-1 border-white">
 
-        {/* Left Image */}
         <div className="hidden md:block">
           <img
             src="https://res.cloudinary.com/dcttatiuj/image/upload/v1766123227/ChatGPT_Image_Dec_19_2025_11_16_31_AM_krsl6b.png"
@@ -226,7 +223,6 @@ function AdminLogin() {
           />
         </div>
 
-        {/* Right Form */}
         <div className="bg-[#020617] border border-white/10 p-8 w-[360px]">
           <h1 className="text-3xl font-bold text-white text-center">Admin Login</h1>
           <p className="text-xs text-gray-400 text-center mt-2 mb-6">
@@ -235,7 +231,6 @@ function AdminLogin() {
 
           <form className="flex flex-col space-y-4" onSubmit={handleSubmitForm}>
 
-            {/* Email */}
             <div>
               <label className="text-xs text-gray-300 font-semibold">EMAIL</label>
               <input
@@ -247,7 +242,6 @@ function AdminLogin() {
               />
             </div>
 
-            {/* Code */}
             <div>
               <label className="text-xs text-gray-300 font-semibold">Password</label>
               <input

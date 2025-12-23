@@ -84,7 +84,6 @@ function Eventsbyuser() {
             key={id}
             className="rounded-2xl bg-gradient-to-br from-[#0f1225] to-[#14172e] p-6 text-white shadow-xl hover:shadow-2xl transition-all hover:shadow-blue-900/40 transform hover:scale-[1.02] animate-slideUp"
           >
-            {/* Status + Title */}
             <div className="flex justify-between items-start mb-4">
               <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
                 ✓ Applied
@@ -99,13 +98,11 @@ function Eventsbyuser() {
               {each.eventTitle}
             </h2>
 
-            {/* Description */}
             <div className="flex gap-2 text-gray-400 text-sm mb-5">
               <FcAbout className="mt-1" />
               <p className="line-clamp-3">{each.ideaDescription}</p>
             </div>
 
-            {/* Dates */}
             <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
               <FaCalendarAlt />
               <span>

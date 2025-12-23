@@ -68,7 +68,6 @@ export default function SignUp() {
   }, [jwtToken]);
 
   if (jwtToken !== undefined) {
-    // toast.success("User already logged in");
     return <Navigate to="/user/allevents" replace />;
   }
 
@@ -76,10 +75,9 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#0f1225] to-[#14172e] relative flex items-center justify-center px-4">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/30"></div>
 
-      {/* Header */}
+
       <header onClick={handleHome} className="absolute cursor-pointer top-6 left-6 z-20">
         <div className="flex items-center gap-2">
           <FaCode size={34} className="text-indigo-400" />
@@ -93,9 +91,9 @@ export default function SignUp() {
         </button>
       </header>
 
-      {/* Card Wrapper */}
+
       <div className="relative z-10 flex shadow-2xl rounded-2xl overflow-hidden flex-col md:flex-row">
-        {/* Form Card */}
+
         <div className="bg-white/5 backdrop-blur-md p-6 md:p-8 w-full max-w-[360px] border border-white/10">
           <h1 className="text-xl md:text-2xl font-bold text-center text-white mb-6">
             Create Account
@@ -105,7 +103,7 @@ export default function SignUp() {
             className="flex flex-col space-y-5"
             onSubmit={handleSubmitForm}
           >
-            {/* Username */}
+
             <div>
               <label className="text-gray-300 text-xs font-semibold">
                 USERNAME
@@ -122,7 +120,6 @@ export default function SignUp() {
               </div>
             </div>
 
-            {/* Email */}
             <div>
               <label className="text-gray-300 text-xs font-semibold">
                 EMAIL
@@ -139,7 +136,7 @@ export default function SignUp() {
               </div>
             </div>
 
-            {/* Password */}
+
             <div>
               <label className="text-gray-300 text-xs font-semibold">
                 PASSWORD
@@ -155,14 +152,14 @@ export default function SignUp() {
               </div>
             </div>
 
-            {/* Error */}
+
             <div className="min-h-[20px]">
               {isErr && (
                 <p className="text-rose-400 text-sm">{showErrorMsg}</p>
               )}
             </div>
 
-            {/* Submit */}
+
             <button
               type="submit"
               className="mt-2 py-3 cursor-pointer rounded-xl bg-indigo-600/80 hover:bg-indigo-600 text-white font-semibold transition"
@@ -179,7 +176,7 @@ export default function SignUp() {
           </p>
         </div>
 
-        {/* Image */}
+
         <div className="hidden md:block">
           <img
             className="h-full w-full md:w-[420px] object-cover"

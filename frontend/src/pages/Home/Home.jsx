@@ -51,7 +51,7 @@ const Home = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#070b1e] text-white overflow-hidden">
-      {/* HERO SECTION */}
+
       <section className="min-h-screen flex flex-col items-center justify-center px-6 relative pt-20 md:pt-0">
         <h1 className="absolute top-6 left-10 text-2xl md:text-3xl font-bold">&lt;/&gt;</h1>
 
@@ -140,7 +140,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* FEATURES SECTION */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <h2 className="text-2xl md:text-4xl md:text-center font-bold text-center mb-14">
           What You Can Do on HackNext
@@ -170,7 +169,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section className="py-24 bg-[#0b102a] px-6">
         <h2 className="text-2xl md:text-4xl font-bold text-center mb-14">
           How HackNext Works
@@ -183,7 +181,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-24 text-center px-6">
         <h2 className="text-2xl md:text-4xl font-bold mb-6">
           Ready to Start Your Tech Journey?

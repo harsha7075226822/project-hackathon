@@ -56,7 +56,6 @@ const AdminProfile = () => {
             <span className="text-gray-400">Name:</span>
             <span className="text-white">{adminData.name || 'N/A'}</span>
           </div>
-          {/* Add more fields as needed */}
         </div>
       ) : (
         <p className="text-gray-400">Unable to load profile data.</p>
@@ -76,18 +75,10 @@ const AdminDashboard = () => {
     return <Navigate to="/admin/login" />;
   }
 
-  const handleLogout = () => {
-    Cookies.remove("admin_token");
-    navigate("/admin/login", { replace: true });
-  };
-
   const handleDropValue = (e) => {
     setDropDownValue(e.target.value)
   }
 
-  const handleHome = () => {
-    navigate("/",{replace:true})
-  }
 
   const handleCreateProject = () => {
     navigate("/createproject",{replace:true})

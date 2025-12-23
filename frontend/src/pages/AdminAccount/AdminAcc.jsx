@@ -71,11 +71,11 @@ function AdminAcc() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1225] to-[#14172e] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f1225] to-[#14172e] text-white pt-10">
       <AdminNavbar />
       <div className="pt-20 p-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
+          
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">
               <span className="text-indigo-400">Admin</span> Profile
@@ -85,9 +85,9 @@ function AdminAcc() {
             </p>
           </div>
 
-          {/* Profile Card */}
+          
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300">
-            {/* Profile Header */}
+            
             <div className="flex items-center gap-6 mb-8">
               <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
                 <FaShieldAlt className="text-white text-3xl" />
@@ -98,9 +98,9 @@ function AdminAcc() {
               </div>
             </div>
 
-            {/* Profile Details */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Email */}
+              
               <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
                   <FaEnvelope className="text-indigo-400 text-xl" />
@@ -109,7 +109,7 @@ function AdminAcc() {
                 <p className="text-gray-300 text-lg">{adminData?.email || "N/A"}</p>
               </div>
 
-              {/* Account Type */}
+              
               <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
                   <FaUser className="text-indigo-400 text-xl" />
@@ -118,7 +118,7 @@ function AdminAcc() {
                 <p className="text-gray-300 text-lg">Administrator</p>
               </div>
 
-              {/* Member Since */}
+              
               <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
                   <FaCalendarAlt className="text-indigo-400 text-xl" />
@@ -133,7 +133,7 @@ function AdminAcc() {
                 </p>
               </div>
 
-              {/* Admin ID */}
+              
               <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
                 <div className="flex items-center gap-3 mb-3">
                   <FaShieldAlt className="text-indigo-400 text-xl" />
@@ -143,7 +143,7 @@ function AdminAcc() {
               </div>
             </div>
 
-            {/* Additional Info */}
+          
             <div className="mt-8 p-6 bg-indigo-900/20 rounded-xl border border-indigo-500/20">
               <h3 className="text-xl font-bold text-indigo-400 mb-4">Account Information</h3>
               <div className="space-y-3 text-gray-300">

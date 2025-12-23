@@ -57,8 +57,6 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen w-full relative flex items-center justify-center px-4 bg-gradient-to-br from-[#0f1225] to-[#14172e] overflow-hidden">
-
-      {/* Glow Background */}
       <div className="absolute inset-0 -z-10">
         <div
           className="absolute top-[-30%] left-1/2 -translate-x-1/2
@@ -74,7 +72,7 @@ const SignIn = () => {
         />
       </div>
 
-      {/* Logo */}
+
       <header onClick={handleHome} className="absolute  cursor-pointer top-6 left-10 z-20 flex items-center gap-2">
         <FaCode size={34} className="text-indigo-400" />
         <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wide">
@@ -82,10 +80,10 @@ const SignIn = () => {
         </h1>
       </header>
 
-      {/* CARD */}
+
       <div className="relative z-10 flex h-auto md:h-[470px] w-full max-w-[760px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5 backdrop-blur-md">
 
-        {/* IMAGE */}
+
         <div className="relative w-1/2 hidden md:block">
           {imageLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -103,7 +101,6 @@ const SignIn = () => {
           />
         </div>
 
-        {/* FORM */}
         <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center text-white">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
             Student Login
@@ -114,7 +111,6 @@ const SignIn = () => {
           </p>
 
           <form className="flex flex-col space-y-5" onSubmit={handleSubmitForm}>
-            {/* Email */}
             <div>
               <label className="text-xs font-semibold text-gray-300">
                 EMAIL
@@ -131,7 +127,6 @@ const SignIn = () => {
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <label className="text-xs font-semibold text-gray-300">
                 PASSWORD
@@ -147,14 +142,14 @@ const SignIn = () => {
               </div>
             </div>
 
-            {/* Error */}
+
             <div className="min-h-[20px]">
               {isErr && (
                 <p className="text-rose-400 text-sm">{showErrorMsg}</p>
               )}
             </div>
 
-            {/* Submit */}
+
             <button
               type="submit"
               className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90 text-white font-semibold py-3 rounded-xl transition cursor-pointer"

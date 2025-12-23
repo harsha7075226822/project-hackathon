@@ -53,7 +53,6 @@ function UserNavbar() {
           text-white
         "
       >
-        {/* LOGO */}
         <div
           onClick={handleRefresh}
           className="
@@ -69,14 +68,12 @@ function UserNavbar() {
           HackNext
         </div>
 
-        {/* DESKTOP NAV ITEMS */}
         <ul className="hidden md:flex items-center gap-3">
           <NavItem label="Home" icon={<FaHome />} onClick={handleHome} />
           <NavItem label="Projects" icon={<FaEye />} onClick={handleProjects} />
           <NavItem icon={<FaRegUser />} onClick={handleUserAccount} />
         </ul>
 
-        {/* MOBILE HAMBURGER */}
         <button
           onClick={toggleMenu}
           className="md:hidden text-white text-2xl"
@@ -85,7 +82,6 @@ function UserNavbar() {
         </button>
       </nav>
 
-      {/* MOBILE MENU */}
       {isMenuOpen && (
         <div className="md:hidden bg-white/5 backdrop-blur-md border-b border-white/10">
           <ul className="flex flex-col items-center gap-3 py-5">

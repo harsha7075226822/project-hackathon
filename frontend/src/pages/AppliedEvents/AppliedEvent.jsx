@@ -142,7 +142,6 @@ function AppliedEvent() {
     <div className='pt-25 bg-gray-500'>
         <span className="border border-black cursor-pointer p-2"
             onClick={handleBackBtn} >
-            {/* <FaArrowLeft size={15} /> */}
             back
         </span>
       <form onSubmit={handleSubmitApply} >
@@ -161,7 +160,6 @@ function AppliedEvent() {
                 {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
             </div>
 
-            {/* Email + Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                 <label className="block mb-1 font-medium">Email Address*</label>
@@ -190,7 +188,6 @@ function AppliedEvent() {
                 </div>
             </div>
 
-            {/* Address Block */}
             <div className="border border-gray-700 rounded p-4 space-y-4">
                 <p className="font-semibold">Address Information</p>
 
@@ -249,7 +246,6 @@ function AppliedEvent() {
                 </div>
             </div>
 
-            {/* Institution & Role */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                 <label className="block mb-1 font-medium">Institution / Company*</label>
@@ -278,7 +274,6 @@ function AppliedEvent() {
                 </div>
             </div>
 
-            {/* Skills */}
             <div>
                 <label className="block mb-1 font-medium">Skills / Expertise*</label>
                 <input
@@ -292,7 +287,6 @@ function AppliedEvent() {
                 {errors.skills && <p className="text-red-500 text-sm mt-1">{errors.skills}</p>}
             </div>
 
-            {/* Team Name */}
             <div>
                 <label className="block mb-1 font-medium">Team Name*</label>
                 <input
@@ -306,7 +300,6 @@ function AppliedEvent() {
                 {errors.teamName && <p className="text-red-500 text-sm mt-1">{errors.teamName}</p>}
             </div>
 
-            {/* Team main name */}
             <div>
                 <label className="block mb-2 font-medium">Team Lead Name</label>
                 <input placeholder='Head of the team' name="teamLeadName" value={ApplyFormData.teamLeadName} onChange={handleDataapply} className='w-full p-2 rounded bg-gray-800 border border-gray-700' />
@@ -317,7 +310,6 @@ function AppliedEvent() {
                 <input placeholder='1 or 2 or 3 or 4 ' name="membersCount" value={ApplyFormData.membersCount} onChange={handleDataapply} className='w-full p-2 rounded bg-gray-800 border border-gray-700' />
             </div>
 
-            {/* Idea Description */}
             <div>
                 <label className="block mb-1 font-medium">
                 Describe your idea or area of interest*
@@ -332,7 +324,6 @@ function AppliedEvent() {
                 />
             </div>
 
-            {/* Submit Button */}
             <button 
                 type="submit" 
                 disabled={isSubmitting}

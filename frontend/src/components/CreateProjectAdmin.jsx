@@ -58,10 +58,6 @@ function CreateProjectAdmin() {
     }
   };
 
-  const handleAdminDashboard = () => {
-    navigate("/admin/dashboard",{replace:true})
-  }
-
   return (
     <div className="bg-blue-950 min-h-screen">
       <AdminNavbar />
