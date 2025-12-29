@@ -110,7 +110,7 @@ function UserAccount() {
 
       setTempImage(null);
     } catch (err) {
-      toast.error("Upload failed",err);
+      toast.error("Upload failed", err);
       setTempImage(null);
     } finally {
       setUploading(false);
@@ -203,20 +203,20 @@ function UserAccount() {
                   >
                     <div className="w-full h-full rounded-full overflow-hidden">
                       {uploading ? (
-  <div className="w-full h-full flex items-center justify-center bg-black/30">
-    <ThreeDot color="#ffffff" size="small" />
-  </div>
-) : (tempImage || userData?.profileImage) ? (
-  <img
-    src={tempImage || userData.profileImage}
-    alt="Profile"
-    className="w-full h-full object-cover"
-  />
-) : (
-  <div className="w-full h-full bg-gradient-to-r from-indigo-500 to-violet-600 flex items-center justify-center text-3xl font-bold text-white">
-    {userData?.username?.[0]?.toUpperCase()}
-  </div>
-)}
+                        <div className="w-full h-full flex items-center justify-center bg-black/30">
+                          <ThreeDot color="#ffffff" size="small" />
+                        </div>
+                      ) : (tempImage || userData?.profileImage) ? (
+                        <img
+                          src={tempImage || userData.profileImage}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-r from-indigo-500 to-violet-600 flex items-center justify-center text-3xl font-bold text-white">
+                          {userData?.username?.[0]?.toUpperCase()}
+                        </div>
+                      )}
 
                     </div>
                   </div>
@@ -318,11 +318,10 @@ function SidebarItem({ icon, label, active, onClick }) {
   return (
     <div
       onClick={onClick}
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition ${
-        active
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition ${active
           ? "bg-gradient-to-r from-indigo-600/30 to-violet-600/30 text-white"
           : "text-gray-400 hover:bg-white/5 hover:text-white"
-      }`}
+        }`}
     >
       {icon}
       <span>{label}</span>
