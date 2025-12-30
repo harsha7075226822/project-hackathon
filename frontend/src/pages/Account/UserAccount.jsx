@@ -89,6 +89,7 @@ function UserAccount() {
 
       const response = await fetch(
         "https://project-hackathon-7utw.onrender.com/user/upload-profile",
+        // "http://localhost:5678/user/upload-profile",
         {
           method: "POST",
           headers: {
@@ -124,6 +125,7 @@ function UserAccount() {
 
       const response = await fetch(
         "https://project-hackathon-7utw.onrender.com/user/remove-profile",
+        // "http://localhost:5678/user/remove-profile",
         {
           method: "DELETE",
           headers: {
@@ -200,6 +202,7 @@ function UserAccount() {
                   <div
                     className="relative group w-24 h-24 mx-auto mb-4 cursor-pointer"
                     onClick={handleImageClick}
+                    onTouchStart={handleImageClick}
                   >
                     <div className="w-full h-full rounded-full overflow-hidden">
                       {uploading ? (
@@ -208,7 +211,7 @@ function UserAccount() {
                         </div>
                       ) : (tempImage || userData?.profileImage) ? (
                         <img
-                          src={tempImage || userData.profileImage}
+                          src={tempImage || userData.profileImage.replace("http://", "https://")}
                           alt="Profile"
                           className="w-full h-full object-cover"
                         />
@@ -250,36 +253,44 @@ function UserAccount() {
       {/* OPTIONS OVERLAY */}
       {showOptions && (
         <div
-          className="fixed inset-0 z-50"
+          className="fixed inset-0 z-50 bg-black/40"
           onClick={() => setShowOptions(false)}
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/80 rounded-xl p-4 space-y-3">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 backdrop-blur-sm rounded-xl p-4 space-y-2 min-w-[200px] shadow-2xl border border-white/10">
 
             {userData.profileImage && (
               <button
-                className="flex cursor-pointer items-center gap-2 text-white"
-                onClick={() => {
+                className="flex w-full cursor-pointer items-center gap-3 text-white py-3 px-4 hover:bg-white/10 rounded-lg transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
                   setShowPreview(true);
                   setShowOptions(false);
                 }}
               >
-                <FaEye /> View Image
+                <FaEye className="text-lg" /> <span className="font-medium">View Image</span>
               </button>
             )}
 
             <button
-              className="flex cursor-pointer items-center gap-2 text-white"
-              onClick={() => fileInputRef.current.click()}
+              className="flex w-full cursor-pointer items-center gap-3 text-white py-3 px-4 hover:bg-white/10 rounded-lg transition-all"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current.click();
+                setShowOptions(false);
+              }}
             >
-              <FaUpload /> Change Image
+              <FaUpload className="text-lg" /> <span className="font-medium">Change Image</span>
             </button>
 
             {userData.profileImage && (
               <button
-                className="flex cursor-pointer items-center gap-2 text-red-400"
-                onClick={handleRemoveImage}
+                className="flex w-full cursor-pointer items-center gap-3 text-red-400 py-3 px-4 hover:bg-white/10 rounded-lg transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveImage();
+                }}
               >
-                <FaTrash /> Remove Image
+                <FaTrash className="text-lg" /> <span className="font-medium">Remove Image</span>
               </button>
             )}
           </div>
